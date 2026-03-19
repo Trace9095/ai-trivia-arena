@@ -6,6 +6,7 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   name: text('name'),
   avatarUrl: text('avatar_url'),
+  passwordHash: text('password_hash'),
   totalScore: integer('total_score').notNull().default(0),
   gamesPlayed: integer('games_played').notNull().default(0),
   streak: integer('streak').notNull().default(0),

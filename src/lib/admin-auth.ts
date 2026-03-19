@@ -10,7 +10,7 @@ export function isAdmin(email: string): boolean {
 export async function requireAdmin(): Promise<{ userId: string; email: string }> {
   const session = await getSession()
   if (!session || !isAdmin(session.email)) {
-    redirect('/')
+    redirect('/admin/login')
   }
   return session
 }
