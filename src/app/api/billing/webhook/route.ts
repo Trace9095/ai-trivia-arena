@@ -5,9 +5,6 @@ import { getDb } from '@/db'
 import { users } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
-// Raw body required for Stripe signature verification
-export const config = { api: { bodyParser: false } }
-
 export async function POST(request: Request) {
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')

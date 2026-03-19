@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       mode: isLifetime ? 'payment' : 'subscription',
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${appUrl}/dashboard?billing=success`,
+      success_url: `${appUrl}/profile?billing=success`,
       cancel_url: `${appUrl}/pricing`,
       customer_email: session.email,
       metadata: {

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import QRCode from 'qrcode'
 import { CATEGORIES, cn } from '@/lib/utils'
 import { CATEGORY_NAMES } from '@/lib/live-game'
-import { Target, Trophy, Flame, CheckCircle2, Lightbulb, RefreshCw, Play, Loader2, Maximize, Minimize, Medal } from 'lucide-react'
+import { Target, Trophy, Flame, CheckCircle2, Lightbulb, RefreshCw, Play, Loader2, Medal } from 'lucide-react'
 
 // ─── Theme definitions ────────────────────────────────────────────────────────
 const THEMES = {
@@ -462,7 +462,6 @@ export default function TVPage() {
   const [activeTheme, setActiveTheme] = useState<ThemeKey>('classic')
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [advancePending, setAdvancePending] = useState(false)
-  const [isFullscreen, setIsFullscreen] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const theme = THEMES[activeTheme]
@@ -499,14 +498,6 @@ export default function TVPage() {
     return () => { if (pollRef.current) clearInterval(pollRef.current) }
   }, [phase, gameCode, poll])
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {})
-    } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {})
-    }
-  }
-
   if (phase === 'setup') return <SetupScreen onStart={handleSetupStart} />
 
   const gs = gameState
@@ -514,17 +505,9 @@ export default function TVPage() {
 
   return (
     <div
-      className={cn('min-h-screen flex flex-col overflow-hidden select-none', theme.bgClass)}
+      className={cn('w-screen h-screen flex flex-col overflow-hidden select-none', theme.bgClass)}
       style={{ fontFamily: 'var(--font-geist-sans), sans-serif' }}
     >
-      {/* Fullscreen button */}
-      <button
-        onClick={toggleFullscreen}
-        className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-white/10 text-white/70 hover:bg-white/20 text-sm font-bold transition-all"
-      >
-        {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
-      </button>
-
       {/* WAITING SCREEN */}
       {(!gs || gs.status === 'waiting') && (
         <div className="flex-1 flex flex-col items-center justify-center p-12 gap-10">

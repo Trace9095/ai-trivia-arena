@@ -165,11 +165,13 @@ function LeaderboardScreen({
   theme,
   joinUrl,
   countdown,
+  isKiosk,
 }: {
   state: AlwaysOnState
   theme: typeof THEMES[ThemeKey]
   joinUrl: string
   countdown: number
+  isKiosk?: boolean
 }) {
   const { question } = state
 
@@ -250,16 +252,18 @@ function LeaderboardScreen({
       </div>
 
       {/* Bottom: join info */}
-      <div className="flex items-center gap-6 shrink-0">
-        <QRCodeImg url={joinUrl} size={120} />
-        <div>
-          <div className="text-white font-bold" style={{ fontSize: 24 }}>Join at <span className="font-black">aitriviaarena.com/join</span></div>
-          <div className="text-white/50 font-bold" style={{ fontSize: 20 }}>Code: <span className="font-black tracking-widest" style={{ color: theme.accentColor }}>{state.gameCode}</span></div>
+      {!isKiosk && (
+        <div className="flex items-center gap-6 shrink-0">
+          <QRCodeImg url={joinUrl} size={120} />
+          <div>
+            <div className="text-white font-bold" style={{ fontSize: 24 }}>Join at <span className="font-black">aitriviaarena.com/join</span></div>
+            <div className="text-white/50 font-bold" style={{ fontSize: 20 }}>Code: <span className="font-black tracking-widest" style={{ color: theme.accentColor }}>{state.gameCode}</span></div>
+          </div>
+          <div className="ml-auto text-white/30 font-bold" style={{ fontSize: 20 }}>
+            {state.playerCount} player{state.playerCount !== 1 ? 's' : ''} online
+          </div>
         </div>
-        <div className="ml-auto text-white/30 font-bold" style={{ fontSize: 20 }}>
-          {state.playerCount} player{state.playerCount !== 1 ? 's' : ''} online
-        </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -269,10 +273,12 @@ function QuestionScreen({
   state,
   theme,
   joinUrl,
+  isKiosk,
 }: {
   state: AlwaysOnState
   theme: typeof THEMES[ThemeKey]
   joinUrl: string
+  isKiosk?: boolean
 }) {
   const { question } = state
 
@@ -337,18 +343,20 @@ function QuestionScreen({
       </div>
 
       {/* Bottom bar: leaderboard strip + QR */}
-      <div className="flex items-center gap-6 px-10 py-4 border-t border-white/10 shrink-0">
-        <QRCodeImg url={joinUrl} size={100} />
-        <div className="shrink-0">
-          <div className="text-white font-bold" style={{ fontSize: 18 }}>aitriviaarena.com/join</div>
-          <div className="font-black tracking-widest" style={{ fontSize: 24, color: theme.accentColor }}>
-            {state.gameCode}
+      {!isKiosk && (
+        <div className="flex items-center gap-6 px-10 py-4 border-t border-white/10 shrink-0">
+          <QRCodeImg url={joinUrl} size={100} />
+          <div className="shrink-0">
+            <div className="text-white font-bold" style={{ fontSize: 18 }}>aitriviaarena.com/join</div>
+            <div className="font-black tracking-widest" style={{ fontSize: 24, color: theme.accentColor }}>
+              {state.gameCode}
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <LeaderboardStrip players={state.leaderboard} accent={theme.accentColor} />
           </div>
         </div>
-        <div className="flex-1 min-w-0">
-          <LeaderboardStrip players={state.leaderboard} accent={theme.accentColor} />
-        </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -357,7 +365,6 @@ function QuestionScreen({
 function TVPageContent() {
   const searchParams = useSearchParams()
   const isKiosk = searchParams.get('kiosk') === 'true'
-  void isKiosk // reserved for future chrome stripping
 
   const [gameState, setGameState] = useState<AlwaysOnState | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -434,11 +441,11 @@ function TVPageContent() {
       style={{ fontFamily: 'var(--font-geist-sans), system-ui, sans-serif' }}
     >
       {gs!.status === 'active' && (
-        <QuestionScreen state={gs!} theme={theme} joinUrl={joinUrl} />
+        <QuestionScreen state={gs!} theme={theme} joinUrl={joinUrl} isKiosk={isKiosk} />
       )}
 
       {gs!.status === 'showing_leaderboard' && (
-        <LeaderboardScreen state={gs!} theme={theme} joinUrl={joinUrl} countdown={lbCountdown} />
+        <LeaderboardScreen state={gs!} theme={theme} joinUrl={joinUrl} countdown={lbCountdown} isKiosk={isKiosk} />
       )}
     </div>
   )
