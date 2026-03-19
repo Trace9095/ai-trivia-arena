@@ -13,12 +13,34 @@ const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'AI Trivia Arena — Questions That Never Repeat',
-  description: 'Every question is generated fresh by Claude AI. Compete daily, climb the leaderboard.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://aitriviaarena.com'),
+  title: {
+    default: 'AI Trivia Arena — Questions That Never Repeat',
+    template: '%s | AI Trivia Arena',
+  },
+  description: 'Every question is generated fresh by Claude AI. Compete in daily challenges, climb the global leaderboard, and never see the same question twice.',
   openGraph: {
-    title: 'AI Trivia Arena',
-    description: 'AI-powered trivia that never repeats. Compete daily.',
+    title: 'AI Trivia Arena — Questions That Never Repeat',
+    description: 'AI-powered trivia that never repeats. Compete daily, climb the global leaderboard.',
     type: 'website',
+    siteName: 'AI Trivia Arena',
+    locale: 'en_US',
+    images: ['/opengraph-image'],
+    url: '/',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AI Trivia Arena — Questions That Never Repeat',
+    description: 'AI-powered trivia that never repeats. Compete daily, climb the global leaderboard.',
+    images: ['/opengraph-image'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  alternates: {
+    canonical: '/',
   },
 }
 
