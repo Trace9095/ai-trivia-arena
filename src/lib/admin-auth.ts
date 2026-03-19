@@ -1,7 +1,7 @@
 import { getSession } from './auth'
 import { redirect } from 'next/navigation'
 
-export const ADMIN_EMAILS = ['trace@epicai.ai', 'ceo@epicai.ai']
+export const ADMIN_EMAILS = ['CEO@epicai.ai', 'ceo@epicai.ai']
 
 export function isAdmin(email: string): boolean {
   return ADMIN_EMAILS.includes(email)

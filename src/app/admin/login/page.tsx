@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
               required
               autoComplete="email"
               className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
-              placeholder="trace@epicai.ai"
+              placeholder="CEO@epicai.ai"
             />
           </div>
 
