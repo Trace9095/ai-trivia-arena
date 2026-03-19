@@ -7,7 +7,7 @@ export const WEB_PRICES = {
 } as const
 
 export const IOS_PRICES = {
-  proMonthly: 6.99,
+  proMonthly: 6.49,
   proYearly: 38.99,
   lifetime: 64.99,
 } as const
