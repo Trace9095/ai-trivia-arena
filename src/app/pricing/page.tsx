@@ -1,7 +1,9 @@
 import { CheckoutButton } from './checkout-button'
 import { PLANS } from '@/lib/stripe'
+import { IOS_PRICES } from '@/lib/pricing'
 import { Check } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { SaveBanner } from '@/components/SaveBanner'
 import Link from 'next/link'
 
 export const metadata = {
@@ -23,6 +25,9 @@ export default function PricingPage() {
           </p>
         </div>
 
+        {/* iOS savings banner — only visible on iOS devices */}
+        <SaveBanner />
+
         {/* Cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
           {/* Free */}
@@ -41,6 +46,7 @@ export default function PricingPage() {
             name={PLANS.proMonthly.name}
             price="$4.99"
             priceSub="per month"
+            iosPrice={`$${IOS_PRICES.proMonthly}/mo`}
             features={PLANS.proMonthly.features}
             highlight={false}
             badge={null}
@@ -58,6 +64,7 @@ export default function PricingPage() {
             name={PLANS.proYearly.name}
             price="$29.99"
             priceSub="per year"
+            iosPrice={`$${IOS_PRICES.proYearly}/yr`}
             features={PLANS.proYearly.features}
             highlight={true}
             badge="Best Value"
@@ -76,6 +83,7 @@ export default function PricingPage() {
             name={PLANS.lifetime.name}
             price="$49.99"
             priceSub="one-time payment"
+            iosPrice={`$${IOS_PRICES.lifetime}`}
             features={PLANS.lifetime.features}
             highlight={false}
             badge={null}
@@ -104,13 +112,14 @@ interface PlanCardProps {
   name: string
   price: string
   priceSub: string
+  iosPrice?: string
   features: readonly string[]
   highlight: boolean
   badge: string | null
   cta: React.ReactNode
 }
 
-function PlanCard({ name, price, priceSub, features, highlight, badge, cta }: PlanCardProps) {
+function PlanCard({ name, price, priceSub, iosPrice, features, highlight, badge, cta }: PlanCardProps) {
   return (
     <Card
       className={
@@ -132,6 +141,11 @@ function PlanCard({ name, price, priceSub, features, highlight, badge, cta }: Pl
         <div className="mt-1">
           <span className="text-3xl font-bold text-zinc-100">{price}</span>
         </div>
+        {iosPrice && (
+          <p className="text-xs text-zinc-500 mt-1">
+            iOS App Store: <span className="line-through">{iosPrice}</span>
+          </p>
+        )}
         <CardDescription className="text-zinc-500 text-sm">{priceSub}</CardDescription>
       </CardHeader>
 
