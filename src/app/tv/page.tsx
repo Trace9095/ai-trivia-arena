@@ -10,7 +10,6 @@ import {
   CheckCircle,
   Flame,
   AlertTriangle,
-  Maximize,
   Loader2,
 } from 'lucide-react'
 
@@ -358,8 +357,8 @@ function QuestionScreen({
 function TVPageContent() {
   const searchParams = useSearchParams()
   const isKiosk = searchParams.get('kiosk') === 'true'
+  void isKiosk // reserved for future chrome stripping
 
-  const [isFullscreen, setIsFullscreen] = useState(false)
   const [gameState, setGameState] = useState<AlwaysOnState | null>(null)
   const [error, setError] = useState<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -386,12 +385,7 @@ function TVPageContent() {
   useEffect(() => {
     poll()
     pollRef.current = setInterval(poll, 1500)
-
-    const onFsChange = () => setIsFullscreen(!!document.fullscreenElement)
-    document.addEventListener('fullscreenchange', onFsChange)
-
     return () => {
-      document.removeEventListener('fullscreenchange', onFsChange)
       if (pollRef.current) clearInterval(pollRef.current)
     }
   }, [poll])
@@ -404,7 +398,7 @@ function TVPageContent() {
   // ── Loading ─────────────────────────────────────────────────────────────────
   if (!gs && !error) {
     return (
-      <div className={cn('min-h-screen flex items-center justify-center', theme.bgClass)}>
+      <div className={cn('w-screen h-screen flex items-center justify-center overflow-hidden', theme.bgClass)}>
         <div className="flex items-center gap-3 text-white/50 font-bold" style={{ fontSize: 36 }}>
           <Loader2 size={36} className="animate-spin" />
           Loading game...
@@ -416,7 +410,7 @@ function TVPageContent() {
   // ── Error state ─────────────────────────────────────────────────────────────
   if (error) {
     return (
-      <div className={cn('min-h-screen flex flex-col items-center justify-center', theme.bgClass)}>
+      <div className={cn('w-screen h-screen flex flex-col items-center justify-center overflow-hidden', theme.bgClass)}>
         <div className="text-center space-y-4">
           <AlertTriangle size={64} className="mx-auto text-yellow-400" />
           <div className="text-white font-black" style={{ fontSize: 40 }}>Setup required</div>
@@ -436,20 +430,9 @@ function TVPageContent() {
 
   return (
     <div
-      className={cn('min-h-screen flex flex-col overflow-hidden select-none', theme.bgClass)}
+      className={cn('w-screen h-screen flex flex-col overflow-hidden select-none', theme.bgClass)}
       style={{ fontFamily: 'var(--font-geist-sans), system-ui, sans-serif' }}
     >
-      {/* Fullscreen hint — hidden in kiosk mode */}
-      {!isKiosk && !isFullscreen && (
-        <button
-          onClick={() => document.documentElement.requestFullscreen().catch(() => {})}
-          className="fixed top-3 right-3 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white/50 hover:bg-white/20 text-sm font-bold"
-        >
-          <Maximize size={14} />
-          Fullscreen
-        </button>
-      )}
-
       {gs!.status === 'active' && (
         <QuestionScreen state={gs!} theme={theme} joinUrl={joinUrl} />
       )}
@@ -463,7 +446,7 @@ function TVPageContent() {
 
 export default function TVPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0A0A14]" />}>
+    <Suspense fallback={<div className="w-screen h-screen bg-[#0A0A14]" />}>
       <TVPageContent />
     </Suspense>
   )
