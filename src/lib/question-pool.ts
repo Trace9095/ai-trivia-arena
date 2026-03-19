@@ -20,7 +20,7 @@ export async function getQuestionsFromPool(
     .select()
     .from(questionPool)
     .where(and(eq(questionPool.category, category), eq(questionPool.difficulty, difficulty)))
-    .orderBy(asc(questionPool.timesUsed), asc(sql`COALESCE(${questionPool.lastUsedAt}, '1970-01-01')`))
+    .orderBy(asc(questionPool.timesUsed), asc(sql`COALESCE(${questionPool.lastUsedAt}, '1970-01-01'::timestamp)`))
     .limit(count)
 
   if (pooled.length >= count) {

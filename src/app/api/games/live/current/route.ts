@@ -28,7 +28,12 @@ function generateCode(): string {
 async function getAlwaysOnQuestions(): Promise<Array<{ questionText: string; correctAnswer: string; wrongAnswers: string[]; explanation: string }>> {
   // Load 2 questions from each of 10 categories = 20 total
   const batches = await Promise.all(
-    CATEGORY_ROTATION.map((cat) => getQuestionsFromPool(cat, 'medium', 2).catch(() => []))
+    CATEGORY_ROTATION.map((cat) =>
+      getQuestionsFromPool(cat, 'medium', 2).catch((err) => {
+        console.error(`getQuestionsFromPool failed for ${cat}/medium:`, err)
+        return []
+      })
+    )
   )
   const all = batches.flat()
   // Fisher-Yates shuffle
