@@ -1,51 +1,182 @@
-import { getSession } from '@/lib/auth'
-import { redirect } from 'next/navigation'
 import { getDb } from '@/db'
-import { users, games, questions, answers } from '@/db/schema'
-import { count } from 'drizzle-orm'
+import { users, games, questions, answers, aiUsageLogs, errorLogs } from '@/db/schema'
+import { count, sum, gte, desc } from 'drizzle-orm'
 import { Card } from '@/components/ui/card'
-import { Users, Gamepad2, Brain, Target } from 'lucide-react'
+import {
+  Users,
+  Gamepad2,
+  Brain,
+  Target,
+  DollarSign,
+  ShieldAlert,
+  TrendingUp,
+  Activity,
+} from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
-const ADMIN_EMAILS = ['trace@epicai.ai', 'ceo@epicai.ai']
+function formatCost(usd: number): string {
+  if (usd === 0) return '$0.00'
+  if (usd < 0.001) return `$${usd.toFixed(5)}`
+  if (usd < 1) return `$${usd.toFixed(4)}`
+  return `$${usd.toFixed(2)}`
+}
 
 export default async function AdminPage() {
-  const session = await getSession()
-  if (!session || !ADMIN_EMAILS.includes(session.email)) {
-    redirect('/')
-  }
-
   const db = getDb()
+
+  const now = new Date()
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+  const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+
+  // Core counts
   const [userCount] = await db.select({ count: count() }).from(users)
   const [gameCount] = await db.select({ count: count() }).from(games)
   const [questionCount] = await db.select({ count: count() }).from(questions)
   const [answerCount] = await db.select({ count: count() }).from(answers)
 
-  return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-      <p className="text-muted-foreground mb-8">AI Trivia Arena metrics</p>
+  // AI costs & errors (new tables — wrapped in try/catch)
+  let totalAiCost = 0
+  let monthAiCost = 0
+  let totalAiCalls = 0
+  let weekErrors = 0
+  let recentUsers: { email: string; gamesPlayed: number; createdAt: Date }[] = []
+  let recentGames: { id: string; category: string; difficulty: string; status: string; createdAt: Date }[] = []
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: 'Total Users', value: userCount.count, icon: Users, color: 'text-blue-400' },
-          { label: 'Total Games', value: gameCount.count, icon: Gamepad2, color: 'text-purple-400' },
-          { label: 'Questions Generated', value: questionCount.count, icon: Brain, color: 'text-green-400' },
-          { label: 'Answers Submitted', value: answerCount.count, icon: Target, color: 'text-yellow-400' },
-        ].map(({ label, value, icon: Icon, color }) => (
-          <Card key={label} className="p-5 text-center">
-            <Icon className={`w-6 h-6 mx-auto mb-2 ${color}`} />
-            <div className="text-3xl font-bold font-mono">{value.toLocaleString()}</div>
+  try {
+    const [allCost] = await db.select({ total: sum(aiUsageLogs.costUsd), calls: count() }).from(aiUsageLogs)
+    totalAiCost = Number(allCost?.total ?? 0)
+    totalAiCalls = allCost?.calls ?? 0
+
+    const [mCost] = await db
+      .select({ total: sum(aiUsageLogs.costUsd) })
+      .from(aiUsageLogs)
+      .where(gte(aiUsageLogs.createdAt, monthStart))
+    monthAiCost = Number(mCost?.total ?? 0)
+
+    const [errCount] = await db
+      .select({ count: count() })
+      .from(errorLogs)
+      .where(gte(errorLogs.createdAt, weekStart))
+    weekErrors = errCount.count
+  } catch {
+    // Tables may not exist yet on first deploy
+  }
+
+  try {
+    recentUsers = await db
+      .select({ email: users.email, gamesPlayed: users.gamesPlayed, createdAt: users.createdAt })
+      .from(users)
+      .orderBy(desc(users.createdAt))
+      .limit(8)
+
+    recentGames = await db
+      .select({
+        id: games.id,
+        category: games.category,
+        difficulty: games.difficulty,
+        status: games.status,
+        createdAt: games.createdAt,
+      })
+      .from(games)
+      .orderBy(desc(games.createdAt))
+      .limit(8)
+  } catch {
+    // ignore
+  }
+
+  const topMetrics = [
+    { label: 'Total Users', value: userCount.count.toLocaleString(), icon: Users, color: 'text-blue-400' },
+    { label: 'Games Played', value: gameCount.count.toLocaleString(), icon: Gamepad2, color: 'text-purple-400' },
+    { label: 'Questions Generated', value: questionCount.count.toLocaleString(), icon: Brain, color: 'text-green-400' },
+    { label: 'Answers Submitted', value: answerCount.count.toLocaleString(), icon: Target, color: 'text-yellow-400' },
+  ]
+
+  const aiMetrics = [
+    { label: 'AI Cost (all time)', value: formatCost(totalAiCost), icon: DollarSign, color: 'text-emerald-400' },
+    { label: 'AI Cost (this month)', value: formatCost(monthAiCost), icon: TrendingUp, color: 'text-emerald-400' },
+    { label: 'Total AI Calls', value: totalAiCalls.toLocaleString(), icon: Activity, color: 'text-sky-400' },
+    { label: 'Errors (7d)', value: weekErrors.toLocaleString(), icon: ShieldAlert, color: weekErrors > 0 ? 'text-red-400' : 'text-muted-foreground' },
+  ]
+
+  return (
+    <div className="p-8 max-w-5xl">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold">Overview</h1>
+        <p className="text-muted-foreground text-sm mt-1">AI Trivia Arena — system metrics</p>
+      </div>
+
+      {/* Core metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        {topMetrics.map(({ label, value, icon: Icon, color }) => (
+          <Card key={label} className="p-4 text-center">
+            <Icon className={`w-5 h-5 mx-auto mb-2 ${color}`} />
+            <div className="text-2xl font-bold font-mono">{value}</div>
             <div className="text-xs text-muted-foreground mt-1">{label}</div>
           </Card>
         ))}
       </div>
 
-      <Card className="p-6">
-        <h2 className="font-bold mb-4">Recent Users</h2>
-        <p className="text-muted-foreground text-sm">Full user management coming in Phase 2.</p>
-      </Card>
+      {/* AI & error metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+        {aiMetrics.map(({ label, value, icon: Icon, color }) => (
+          <Card key={label} className="p-4 text-center">
+            <Icon className={`w-5 h-5 mx-auto mb-2 ${color}`} />
+            <div className="text-2xl font-bold font-mono">{value}</div>
+            <div className="text-xs text-muted-foreground mt-1">{label}</div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Recent activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-5">
+          <h2 className="font-semibold text-sm mb-3 text-muted-foreground uppercase tracking-wide">
+            Recent Users
+          </h2>
+          {recentUsers.length === 0 ? (
+            <p className="text-muted-foreground text-sm">No users yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {recentUsers.map((u) => (
+                <div key={u.email} className="flex items-center justify-between text-sm">
+                  <span className="font-mono text-xs truncate max-w-[200px]">{u.email}</span>
+                  <span className="text-muted-foreground text-xs">{u.gamesPlayed} games</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card className="p-5">
+          <h2 className="font-semibold text-sm mb-3 text-muted-foreground uppercase tracking-wide">
+            Recent Games
+          </h2>
+          {recentGames.length === 0 ? (
+            <p className="text-muted-foreground text-sm">No games yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {recentGames.map((g) => (
+                <div key={g.id} className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="capitalize">{g.category.replace('_', ' ')}</span>
+                    <span className="text-xs text-muted-foreground capitalize">({g.difficulty})</span>
+                  </div>
+                  <span
+                    className={`text-xs px-1.5 py-0.5 rounded font-mono ${
+                      g.status === 'completed'
+                        ? 'bg-green-500/10 text-green-400'
+                        : 'bg-yellow-500/10 text-yellow-400'
+                    }`}
+                  >
+                    {g.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      </div>
     </div>
   )
 }

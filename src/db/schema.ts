@@ -1,4 +1,4 @@
-import { pgTable, text, integer, boolean, timestamp, date, jsonb, uuid } from 'drizzle-orm/pg-core'
+import { pgTable, text, integer, boolean, timestamp, date, jsonb, uuid, real } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
 export const users = pgTable('users', {
@@ -103,6 +103,63 @@ export const sessions = pgTable('sessions', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
+// AI usage tracking — every Claude API call is logged here
+export const aiUsageLogs = pgTable('ai_usage_logs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id),
+  gameId: uuid('game_id').references(() => games.id),
+  model: text('model').notNull(),
+  inputTokens: integer('input_tokens').notNull().default(0),
+  outputTokens: integer('output_tokens').notNull().default(0),
+  totalTokens: integer('total_tokens').notNull().default(0),
+  costUsd: real('cost_usd').notNull().default(0),
+  promptType: text('prompt_type').notNull().default('question_generation'),
+  latencyMs: integer('latency_ms'),
+  success: boolean('success').notNull().default(true),
+  errorMessage: text('error_message'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+// API errors, auth failures, DB errors — all logged here
+export const errorLogs = pgTable('error_logs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  errorType: text('error_type').notNull(), // 'api' | 'auth' | 'db' | 'client' | 'ai'
+  message: text('message').notNull(),
+  stackTrace: text('stack_trace'),
+  userId: uuid('user_id').references(() => users.id),
+  gameId: uuid('game_id').references(() => games.id),
+  endpoint: text('endpoint'),
+  method: text('method'),
+  statusCode: integer('status_code'),
+  userAgent: text('user_agent'),
+  ipAddress: text('ip_address'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+// Revenue scaffold — populated when Stripe/RevenueCat is added
+export const revenueEvents = pgTable('revenue_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id),
+  eventType: text('event_type').notNull(), // 'subscription' | 'iap' | 'ad_impression'
+  amountUsd: real('amount_usd').notNull().default(0),
+  currency: text('currency').notNull().default('usd'),
+  provider: text('provider').notNull(), // 'stripe' | 'revenuecat' | 'admob'
+  providerEventId: text('provider_event_id'),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
+// Manual cost entries — hosting, domain, API credits, etc.
+export const costEvents = pgTable('cost_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  category: text('category').notNull(), // 'ai_tokens' | 'hosting' | 'api_calls' | 'domain'
+  amountUsd: real('amount_usd').notNull().default(0),
+  description: text('description').notNull(),
+  project: text('project').notNull().default('ai-trivia-arena'),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   gamePlayers: many(gamePlayers),
@@ -138,4 +195,18 @@ export const leaderboardsRelations = relations(leaderboards, ({ one }) => ({
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}))
+
+export const aiUsageLogsRelations = relations(aiUsageLogs, ({ one }) => ({
+  user: one(users, { fields: [aiUsageLogs.userId], references: [users.id] }),
+  game: one(games, { fields: [aiUsageLogs.gameId], references: [games.id] }),
+}))
+
+export const errorLogsRelations = relations(errorLogs, ({ one }) => ({
+  user: one(users, { fields: [errorLogs.userId], references: [users.id] }),
+  game: one(games, { fields: [errorLogs.gameId], references: [games.id] }),
+}))
+
+export const revenueEventsRelations = relations(revenueEvents, ({ one }) => ({
+  user: one(users, { fields: [revenueEvents.userId], references: [users.id] }),
 }))
