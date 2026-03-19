@@ -65,7 +65,7 @@ export default function OGImage() {
               letterSpacing: -2,
             }}
           >
-            🧠 AI Trivia Arena
+            AI Trivia Arena
           </div>
           <div
             style={{

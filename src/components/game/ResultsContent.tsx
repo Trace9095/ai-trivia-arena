@@ -4,17 +4,17 @@ import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Trophy, RotateCcw, Home, Share2 } from 'lucide-react'
+import { Trophy, RotateCcw, Home, Share2, Medal, Target, Dumbbell, Flame, Sparkles, Star } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
-function GradeEmoji({ accuracy }: { accuracy: number }) {
-  if (accuracy === 100) return <span>🏆</span>
-  if (accuracy >= 90) return <span>🥇</span>
-  if (accuracy >= 80) return <span>🥈</span>
-  if (accuracy >= 70) return <span>🥉</span>
-  if (accuracy >= 60) return <span>🎯</span>
-  return <span>💪</span>
+function GradeIcon({ accuracy }: { accuracy: number }) {
+  if (accuracy === 100) return <Trophy className="w-14 h-14 text-yellow-400" />
+  if (accuracy >= 90) return <Medal className="w-14 h-14 text-yellow-400" />
+  if (accuracy >= 80) return <Medal className="w-14 h-14 text-slate-400" />
+  if (accuracy >= 70) return <Medal className="w-14 h-14 text-amber-700" />
+  if (accuracy >= 60) return <Target className="w-14 h-14 text-blue-400" />
+  return <Dumbbell className="w-14 h-14 text-purple-400" />
 }
 
 export function ResultsContent() {
@@ -26,7 +26,7 @@ export function ResultsContent() {
   const [copied, setCopied] = useState(false)
 
   const getGrade = () => {
-    if (accuracy === 100) return { grade: 'A+', label: 'Perfect Score! 🔥', color: 'text-yellow-400' }
+    if (accuracy === 100) return { grade: 'A+', label: 'Perfect Score!', color: 'text-yellow-400' }
     if (accuracy >= 90) return { grade: 'A+', label: 'Trivia Master!', color: 'text-yellow-400' }
     if (accuracy >= 80) return { grade: 'A', label: 'Excellent!', color: 'text-green-400' }
     if (accuracy >= 70) return { grade: 'B', label: 'Great Job!', color: 'text-blue-400' }
@@ -37,7 +37,7 @@ export function ResultsContent() {
   const { grade, label, color } = getGrade()
 
   const handleShare = async () => {
-    const text = `I scored ${score.toLocaleString()} pts (${accuracy}% accuracy) on AI Trivia Arena! 🧠 aitriviaarena.com`
+    const text = `I scored ${score.toLocaleString()} pts (${accuracy}% accuracy) on AI Trivia Arena! aitriviaarena.com`
     try {
       if (navigator.share) {
         await navigator.share({ text })
@@ -53,16 +53,16 @@ export function ResultsContent() {
 
   return (
     <div className="max-w-md mx-auto px-4 py-12">
-      {/* Grade + emoji */}
+      {/* Grade icon */}
       <div className="text-center mb-8">
-        <div className="text-6xl mb-2">
-          <GradeEmoji accuracy={accuracy} />
+        <div className="flex justify-center mb-2">
+          <GradeIcon accuracy={accuracy} />
         </div>
         <div className={`text-7xl font-black mb-2 font-mono ${color}`}>{grade}</div>
         <h1 className="text-2xl font-bold">{label}</h1>
         {accuracy === 100 && (
-          <div className="mt-3 text-yellow-400 text-sm font-medium animate-pulse">
-            ✨ You got every single question right!
+          <div className="mt-3 text-yellow-400 text-sm font-medium animate-pulse flex items-center justify-center gap-1">
+            <Sparkles className="w-4 h-4" /> You got every single question right!
           </div>
         )}
       </div>
@@ -100,7 +100,9 @@ export function ResultsContent() {
         {accuracy >= 80 && (
           <div className="mt-4 text-center">
             <Badge className="bg-yellow-950 text-yellow-400 border-yellow-800 text-sm px-4 py-1.5">
-              {accuracy === 100 ? '🔥 Perfect Score!' : '⭐ Top Performance!'}
+              {accuracy === 100
+                ? <span className="flex items-center gap-1"><Flame className="w-4 h-4" /> Perfect Score!</span>
+                : <span className="flex items-center gap-1"><Star className="w-4 h-4" /> Top Performance!</span>}
             </Badge>
           </div>
         )}

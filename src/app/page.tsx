@@ -5,8 +5,13 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Brain, Trophy, Zap, Users, Star, Flame, Tv, Smartphone, ChevronRight } from 'lucide-react'
+import { Brain, Trophy, Zap, Users, Star, Flame, Tv, Smartphone, ChevronRight, Target, FlaskConical, Scroll, Globe, Clapperboard, UtensilsCrossed, Laptop, Film, Music, Mountain, type LucideIcon } from 'lucide-react'
 import { CATEGORIES } from '@/lib/utils'
+
+const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
+  Target, FlaskConical, Scroll, Globe, Clapperboard,
+  Trophy, UtensilsCrossed, Laptop, Film, Music, Mountain,
+}
 
 function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
   const [val, setVal] = useState(0)
@@ -52,7 +57,7 @@ export default function LandingPage() {
         </div>
 
         <div className="relative max-w-6xl mx-auto px-4 py-24 text-center">
-          <Badge className="mb-6 bg-blue-950 text-blue-400 border-blue-800">⚡ Powered by Claude AI</Badge>
+          <Badge className="mb-6 bg-blue-950 text-blue-400 border-blue-800 inline-flex items-center gap-1"><Zap className="w-3 h-3" /> Powered by Claude AI</Badge>
           <h1 className="text-5xl sm:text-7xl font-bold mb-6 leading-tight">
             AI Trivia That{' '}
             <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -89,8 +94,8 @@ export default function LandingPage() {
       <section className="max-w-6xl mx-auto px-4 py-8">
         <div className="bg-gradient-to-r from-purple-950 via-blue-950 to-purple-950 border border-purple-800 rounded-2xl p-8 flex flex-col lg:flex-row items-center gap-8">
           <div className="flex-1">
-            <Badge className="mb-3 bg-purple-900 text-purple-300 border-purple-700">
-              🎮 NEW — Kahoot-style TV Mode
+            <Badge className="mb-3 bg-purple-900 text-purple-300 border-purple-700 inline-flex items-center gap-1">
+              <Tv className="w-3 h-3" /> NEW — Kahoot-style TV Mode
             </Badge>
             <h2 className="text-3xl font-bold mb-3">Host Trivia Night on Your TV</h2>
             <p className="text-muted-foreground mb-6">
@@ -115,13 +120,13 @@ export default function LandingPage() {
           </div>
           <div className="flex-shrink-0 grid grid-cols-2 gap-3 w-full lg:w-auto">
             {[
-              { icon: '🎯', label: '11 categories' },
-              { icon: '⚡', label: 'Live scoring' },
-              { icon: '📱', label: 'Phone join' },
-              { icon: '🏆', label: 'Live leaderboard' },
-            ].map(({ icon, label }) => (
+              { Icon: Target, label: '11 categories' },
+              { Icon: Zap, label: 'Live scoring' },
+              { Icon: Smartphone, label: 'Phone join' },
+              { Icon: Trophy, label: 'Live leaderboard' },
+            ].map(({ Icon, label }) => (
               <div key={label} className="bg-black/30 border border-purple-800/50 rounded-xl px-4 py-3 text-center">
-                <div className="text-2xl mb-1">{icon}</div>
+                <Icon className="w-6 h-6 mx-auto mb-1 text-purple-400" />
                 <div className="text-xs text-muted-foreground font-medium">{label}</div>
               </div>
             ))}
@@ -191,9 +196,13 @@ export default function LandingPage() {
         <h2 className="text-3xl font-bold text-center mb-4">11 Categories</h2>
         <p className="text-muted-foreground text-center mb-10">Something for every trivia fan</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {CATEGORIES.map((cat) => (
+          {CATEGORIES.map((cat) => {
+            const CatIcon = CATEGORY_ICON_MAP[cat.icon] ?? Target
+            return (
             <Card key={cat.id} className="p-4 text-center hover:border-blue-500 transition-colors cursor-pointer group">
-              <div className="text-3xl mb-2 group-hover:scale-110 transition-transform inline-block">{cat.icon}</div>
+              <div className="mb-2 flex justify-center group-hover:scale-110 transition-transform">
+                <CatIcon className="w-8 h-8 text-blue-400" />
+              </div>
               <div className="font-semibold text-sm">{cat.name}</div>
               {cat.isPremium && (
                 <Badge variant="secondary" className="mt-1 text-xs">
@@ -202,7 +211,7 @@ export default function LandingPage() {
                 </Badge>
               )}
             </Card>
-          ))}
+          )})}
         </div>
       </section>
 

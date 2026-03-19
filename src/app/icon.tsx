@@ -16,10 +16,13 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 20,
+          fontSize: 13,
+          fontWeight: 900,
+          color: '#ffffff',
+          letterSpacing: -0.5,
         }}
       >
-        🧠
+        AI
       </div>
     ),
     { ...size }

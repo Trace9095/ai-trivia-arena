@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { Target, Loader2, Flame, CheckCircle2, XCircle, Trophy, Medal } from 'lucide-react'
 
 const ANSWER_COLORS = [
   { bg: 'bg-red-600', border: 'border-red-400', label: 'A', hex: '#DC2626' },
@@ -200,7 +201,9 @@ function JoinContent() {
       <div className="min-h-screen bg-[#0A0A14] flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="text-5xl mb-3">🎯</div>
+            <div className="flex justify-center mb-3">
+              <Target className="w-12 h-12 text-blue-400" />
+            </div>
             <h1 className="text-3xl font-black text-white">AI Trivia Arena</h1>
             <p className="text-white/50 mt-2">
               {currentGameCode
@@ -255,7 +258,7 @@ function JoinContent() {
               disabled={joining || !name.trim() || (showCodeInput && !manualCode.trim())}
               className="w-full py-5 rounded-2xl text-white text-xl font-black bg-blue-600 hover:bg-blue-500 disabled:opacity-40 transition-all active:scale-95 min-h-[64px]"
             >
-              {joining ? '⏳ Joining...' : '🚀 Join Game'}
+              {joining ? <><Loader2 className="w-5 h-5 animate-spin inline mr-2" />Joining...</> : 'Join Game'}
             </button>
 
             <p className="text-white/30 text-center text-sm">No account needed</p>
@@ -278,7 +281,9 @@ function JoinContent() {
         <div className="flex gap-3 items-center">
           {st && <span className="text-white font-black text-lg">{st.myScore.toLocaleString()} pts</span>}
           {(st?.myStreak ?? 0) >= 3 && (
-            <span className="text-orange-400 font-bold text-sm">🔥{st!.myStreak}</span>
+            <span className="text-orange-400 font-bold text-sm flex items-center gap-0.5">
+              <Flame className="w-4 h-4" />{st!.myStreak}
+            </span>
           )}
           <button onClick={leaveGame} className="text-white/30 text-sm hover:text-white/60 min-w-[44px] min-h-[44px] flex items-center justify-center">
             Leave
@@ -291,7 +296,7 @@ function JoinContent() {
         {/* WAITING / LOADING */}
         {(!st || st.status === 'waiting') && (
           <div className="text-center space-y-6">
-            <div className="text-6xl animate-bounce">⏳</div>
+            <Loader2 className="w-16 h-16 text-blue-400 animate-spin" />
             <h2 className="text-2xl font-black text-white">Getting ready...</h2>
             <p className="text-white/50">First question is coming up!</p>
           </div>
@@ -338,7 +343,11 @@ function JoinContent() {
               )}>
                 {answerResult ? (
                   <>
-                    <div className="text-4xl mb-2">{answerResult.isCorrect ? '✅' : '❌'}</div>
+                    <div className="flex justify-center mb-2">
+                      {answerResult.isCorrect
+                        ? <CheckCircle2 className="w-10 h-10 text-green-400" />
+                        : <XCircle className="w-10 h-10 text-red-400" />}
+                    </div>
                     <div className="text-white font-black text-xl">
                       {answerResult.isCorrect ? 'Correct!' : 'Wrong!'}
                     </div>
@@ -346,7 +355,9 @@ function JoinContent() {
                       <div className="text-green-400 font-bold text-lg mt-1">+{answerResult.points} pts</div>
                     )}
                     {answerResult.streak >= 3 && (
-                      <div className="text-orange-400 font-bold mt-1">🔥 {answerResult.streak} streak!</div>
+                      <div className="text-orange-400 font-bold mt-1 flex items-center justify-center gap-1">
+                        <Flame className="w-4 h-4" /> {answerResult.streak} streak!
+                      </div>
                     )}
                     <div className="text-white/40 text-sm mt-2">Waiting for leaderboard...</div>
                   </>
@@ -366,7 +377,11 @@ function JoinContent() {
                 'rounded-2xl p-6 border-2',
                 st.myLastAnswer.isCorrect ? 'bg-green-950/70 border-green-500' : 'bg-red-950/70 border-red-500'
               )}>
-                <div className="text-5xl mb-3">{st.myLastAnswer.isCorrect ? '🎉' : '😬'}</div>
+                <div className="flex justify-center mb-3">
+                  {st.myLastAnswer.isCorrect
+                    ? <CheckCircle2 className="w-14 h-14 text-green-400" />
+                    : <XCircle className="w-14 h-14 text-red-400" />}
+                </div>
                 <div className="text-white font-black text-2xl">
                   {st.myLastAnswer.isCorrect ? 'You got it!' : 'Not quite'}
                 </div>
@@ -394,7 +409,9 @@ function JoinContent() {
         {/* LEADERBOARD */}
         {st?.status === 'showing_leaderboard' && (
           <div className="w-full text-center space-y-4">
-            <div className="text-3xl font-black text-white">🏆 Leaderboard</div>
+            <div className="text-3xl font-black text-white flex items-center justify-center gap-2">
+              <Trophy className="w-8 h-8 text-yellow-400" /> Leaderboard
+            </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
               <div className="text-white/60 text-sm font-bold">Your rank</div>
               <div className="text-5xl font-black text-blue-400">#{st.myRank}</div>
@@ -415,8 +432,10 @@ function JoinContent() {
         {st?.status === 'finished' && (
           <div className="w-full space-y-6">
             <div className="text-center">
-              <div className="text-6xl mb-3">
-                {st.myRank === 1 ? '🥇' : st.myRank === 2 ? '🥈' : st.myRank === 3 ? '🥉' : '🎮'}
+              <div className="flex justify-center mb-3">
+                {st.myRank <= 3
+                  ? <Medal className="w-16 h-16 text-yellow-400" />
+                  : <Trophy className="w-16 h-16 text-blue-400" />}
               </div>
               <h2 className="text-3xl font-black text-white">Game Over!</h2>
               <p className="text-white/60 mt-1">You finished #{st.myRank} of {st.totalPlayers}</p>
@@ -432,7 +451,9 @@ function JoinContent() {
                   <div className="text-white/50 text-xs mt-1">Correct</div>
                 </div>
                 <div>
-                  <div className="text-orange-400 font-black text-3xl">{st.myStreak}🔥</div>
+                  <div className="text-orange-400 font-black text-3xl flex items-center justify-center gap-1">
+                    {st.myStreak}<Flame className="w-7 h-7" />
+                  </div>
                   <div className="text-white/50 text-xs mt-1">Best Streak</div>
                 </div>
               </div>

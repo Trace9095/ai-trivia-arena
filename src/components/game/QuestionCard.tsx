@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { Flame } from 'lucide-react'
+import { Flame, CheckCircle2, XCircle, Timer } from 'lucide-react'
 
 interface QuestionCardProps {
   question: {
@@ -112,7 +112,7 @@ export function QuestionCard({
       {/* Pop animation on correct */}
       {showPop && (
         <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
-          <span className="text-6xl animate-bounce">✅</span>
+          <CheckCircle2 className="w-20 h-20 text-green-400 animate-bounce" />
         </div>
       )}
 
@@ -172,8 +172,12 @@ export function QuestionCard({
             result.isCorrect ? 'bg-green-950/50 border-green-800' : 'bg-red-950/50 border-red-800'
           )}
         >
-          <p className="font-bold text-lg mb-1">
-            {result.isCorrect ? '✅ Correct!' : selectedAnswer === '' ? '⏱ Time\'s up!' : '❌ Wrong'}
+          <p className="font-bold text-lg mb-1 flex items-center gap-1">
+            {result.isCorrect
+              ? <><CheckCircle2 className="w-5 h-5 text-green-400" /> Correct!</>
+              : selectedAnswer === ''
+                ? <><Timer className="w-5 h-5 text-yellow-400" /> Time&apos;s up!</>
+                : <><XCircle className="w-5 h-5 text-red-400" /> Wrong</>}
           </p>
           {!result.isCorrect && selectedAnswer !== '' && (
             <p className="text-sm text-muted-foreground mb-1">

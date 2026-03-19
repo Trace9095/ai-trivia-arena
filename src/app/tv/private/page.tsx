@@ -4,12 +4,13 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import QRCode from 'qrcode'
 import { CATEGORIES, cn } from '@/lib/utils'
 import { CATEGORY_NAMES } from '@/lib/live-game'
+import { Target, Trophy, Flame, CheckCircle2, Lightbulb, RefreshCw, Play, Loader2, Maximize, Minimize, Medal } from 'lucide-react'
 
 // ─── Theme definitions ────────────────────────────────────────────────────────
 const THEMES = {
   classic: {
     label: 'Classic',
-    emoji: '🌌',
+    emoji: 'CL',
     outerClass: 'tv-classic',
     bgClass: 'bg-gradient-to-b from-[#0A0A14] via-[#1A1040] to-[#0A0A14]',
     cardClass: 'bg-white/5 border border-blue-500/30 backdrop-blur-sm',
@@ -20,7 +21,7 @@ const THEMES = {
   },
   neon: {
     label: 'Neon',
-    emoji: '⚡',
+    emoji: 'NE',
     outerClass: 'tv-neon',
     bgClass: 'bg-black',
     cardClass: 'bg-black border border-[#FF006E] shadow-[0_0_20px_#FF006E55]',
@@ -31,7 +32,7 @@ const THEMES = {
   },
   royalgorge: {
     label: 'Royal Gorge',
-    emoji: '🏔️',
+    emoji: 'RG',
     outerClass: 'tv-royalgorge',
     bgClass: 'bg-gradient-to-b from-[#3E2723] via-[#BF360C] to-[#4A148C]',
     cardClass: 'bg-[#5D4037]/60 border border-orange-400/40',
@@ -42,7 +43,7 @@ const THEMES = {
   },
   sportsbar: {
     label: 'Sports Bar',
-    emoji: '🍺',
+    emoji: 'SB',
     outerClass: 'tv-sportsbar',
     bgClass: 'bg-gradient-to-b from-[#1B5E20] to-[#0A2E0A]',
     cardClass: 'bg-black/60 border border-yellow-500/50',
@@ -136,7 +137,9 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
   return (
     <div className={cn('min-h-screen flex flex-col items-center justify-center p-8', theme.bgClass)}>
       <div className="w-full max-w-3xl">
-        <h1 className="text-5xl font-black text-white text-center mb-2">🎯 AI Trivia Arena</h1>
+        <h1 className="text-5xl font-black text-white text-center mb-2 flex items-center justify-center gap-3">
+          <Target className="w-12 h-12 text-blue-400" /> AI Trivia Arena
+        </h1>
         <p className="text-white/60 text-center text-xl mb-10">TV Host Setup</p>
 
         <div className={cn('rounded-3xl p-8 space-y-8', theme.cardClass)}>
@@ -154,7 +157,12 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
                   )}
                   style={{ background: config.theme === t ? THEMES[t].accentColor + '33' : 'transparent' }}
                 >
-                  <div className="text-2xl">{THEMES[t].emoji}</div>
+                  <div
+                    className="text-xs font-black w-10 h-10 rounded-lg flex items-center justify-center mx-auto"
+                    style={{ background: THEMES[t].accentColor + '33', color: THEMES[t].accentColor, border: `1px solid ${THEMES[t].accentColor}66` }}
+                  >
+                    {THEMES[t].emoji}
+                  </div>
                   <div className="text-white text-xs font-bold mt-1">{THEMES[t].label}</div>
                 </button>
               ))}
@@ -167,9 +175,9 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
               <label className="text-white/70 text-sm font-bold uppercase tracking-wider block mb-3">Category Mode</label>
               <div className="space-y-2">
                 {[
-                  { value: 'single', label: '📌 Single Category' },
-                  { value: 'rotating', label: '🎲 Players Pick (Rotating)' },
-                  { value: 'random', label: '🔀 Random Mix' },
+                  { value: 'single', label: 'Single Category' },
+                  { value: 'rotating', label: 'Players Pick (Rotating)' },
+                  { value: 'random', label: 'Random Mix' },
                 ].map((opt) => (
                   <button
                     key={opt.value}
@@ -197,7 +205,7 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
                   >
                     {CATEGORIES.map((cat) => (
                       <option key={cat.id} value={cat.id} className="bg-gray-900">
-                        {cat.icon} {cat.name}
+                        {cat.name}
                       </option>
                     ))}
                   </select>
@@ -288,7 +296,9 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
             className="w-full py-6 rounded-2xl text-white text-3xl font-black transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
             style={{ background: theme.accentColor, boxShadow: `0 0 40px ${theme.accentColor}66` }}
           >
-            {loading ? '⏳ Generating...' : '🚀 Start Game'}
+            {loading
+              ? <><Loader2 className="w-7 h-7 animate-spin inline mr-3" />Generating...</>
+              : <><Play className="w-7 h-7 inline mr-3" />Start Game</>}
           </button>
         </div>
       </div>
@@ -373,7 +383,7 @@ function Leaderboard({
   showAll?: boolean
 }) {
   const shown = showAll ? players : players.slice(0, 5)
-  const medals = ['🥇', '🥈', '🥉']
+  const medalColors = ['#F59E0B', '#9CA3AF', '#CD7F32']
 
   return (
     <div className="space-y-3 w-full">
@@ -388,8 +398,10 @@ function Leaderboard({
             : {}
           }
         >
-          <span style={{ fontSize: 48, minWidth: 60, textAlign: 'center' }}>
-            {medals[i] ?? <span className="font-mono" style={{ fontSize: 40, color: 'rgba(255,255,255,0.5)' }}>{i + 1}</span>}
+          <span style={{ minWidth: 60, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {i < 3
+              ? <Medal size={40} style={{ color: medalColors[i] }} />
+              : <span className="font-mono" style={{ fontSize: 40, color: 'rgba(255,255,255,0.5)' }}>{i + 1}</span>}
           </span>
           <span className="flex-1 font-black text-white truncate" style={{ fontSize: 48 }}>
             {p.displayName}
@@ -398,7 +410,9 @@ function Leaderboard({
             {p.score.toLocaleString()}
           </span>
           {p.streak >= 3 && (
-            <span style={{ fontSize: 40 }}>🔥{p.streak}</span>
+            <span className="flex items-center gap-1" style={{ color: '#F97316' }}>
+              <Flame size={36} /><span className="font-black" style={{ fontSize: 36 }}>{p.streak}</span>
+            </span>
           )}
         </div>
       ))}
@@ -418,7 +432,8 @@ function Podium({ players }: { players: GameState['leaderboard'] }) {
         if (!p) return <div key={idx} className="w-64" />
         const heights = ['h-48', 'h-64', 'h-36']
         const colors = ['#9CA3AF', '#F59E0B', '#CD7F32']
-        const labels = ['🥈 2nd', '🥇 1st', '🥉 3rd']
+        const labels = ['2nd', '1st', '3rd']
+        const podiumMedalColors = ['#9CA3AF', '#F59E0B', '#CD7F32']
 
         return (
           <div key={p.id} className="flex flex-col items-center">
@@ -430,8 +445,8 @@ function Podium({ players }: { players: GameState['leaderboard'] }) {
               className={cn('flex flex-col items-center justify-end rounded-t-2xl', heights[idx])}
               style={{ width: 220, background: colors[idx] + '44', border: `3px solid ${colors[idx]}` }}
             >
-              <div style={{ fontSize: 64 }}>{labels[idx].split(' ')[0]}</div>
-              <div className="text-white font-bold text-2xl pb-4">{labels[idx].split(' ')[1]}</div>
+              <Medal size={56} style={{ color: podiumMedalColors[idx] }} />
+              <div className="text-white font-bold text-2xl pb-4">{labels[idx]}</div>
             </div>
           </div>
         )
@@ -507,14 +522,14 @@ export default function TVPage() {
         onClick={toggleFullscreen}
         className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-white/10 text-white/70 hover:bg-white/20 text-sm font-bold transition-all"
       >
-        {isFullscreen ? '⊡ Exit' : '⛶ Fullscreen'}
+        {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
       </button>
 
       {/* WAITING SCREEN */}
       {(!gs || gs.status === 'waiting') && (
         <div className="flex-1 flex flex-col items-center justify-center p-12 gap-10">
-          <div className="text-white font-black text-center" style={{ fontSize: 56 }}>
-            🎯 AI Trivia Arena
+          <div className="text-white font-black text-center flex items-center justify-center gap-4" style={{ fontSize: 56 }}>
+            <Target size={56} className="text-blue-400" /> AI Trivia Arena
           </div>
 
           <div className="flex gap-16 items-center">
@@ -573,7 +588,9 @@ export default function TVPage() {
             className="px-16 py-6 rounded-3xl text-white font-black transition-all hover:scale-105 active:scale-95 disabled:opacity-40"
             style={{ fontSize: 36, background: theme.accentColor, boxShadow: `0 0 60px ${theme.accentColor}55` }}
           >
-            {advancePending ? '⏳ Starting...' : '▶ Start Game!'}
+            {advancePending
+              ? <><Loader2 className="w-8 h-8 animate-spin inline mr-3" />Starting...</>
+              : <><Play className="w-8 h-8 inline mr-3" />Start Game!</>}
           </button>
         </div>
       )}
@@ -584,8 +601,9 @@ export default function TVPage() {
           <div className="text-white/60 font-bold uppercase tracking-widest" style={{ fontSize: 36 }}>
             Round {gs.currentRound + 1} of {gs.roundCount}
           </div>
-          <div className="font-black text-white text-center" style={{ fontSize: 80 }}>
-            🎯 {gs.picker?.displayName ?? 'Someone'}&apos;s Pick!
+          <div className="font-black text-white text-center flex items-center justify-center gap-4" style={{ fontSize: 80 }}>
+            <Target size={80} className="text-blue-400 shrink-0" />
+            <span>{gs.picker?.displayName ?? 'Someone'}&apos;s Pick!</span>
           </div>
           <div className="text-white/70 font-bold" style={{ fontSize: 48 }}>
             Waiting for them to choose a category...
@@ -660,8 +678,8 @@ export default function TVPage() {
       {/* SHOWING ANSWER */}
       {gs?.status === 'showing_answer' && gs.question && (
         <div className="flex-1 flex flex-col p-10 gap-8">
-          <div className="text-center font-black text-white" style={{ fontSize: 60 }}>
-            ✅ Correct Answer!
+          <div className="text-center font-black text-white flex items-center justify-center gap-4" style={{ fontSize: 60 }}>
+            <CheckCircle2 size={60} className="text-green-400 shrink-0" /> Correct Answer!
           </div>
 
           {/* Question */}
@@ -684,8 +702,8 @@ export default function TVPage() {
                     transform: isCorrect ? 'scale(1.03)' : 'scale(0.97)',
                   }}
                 >
-                  <span className="font-black text-white" style={{ fontSize: 56, minWidth: 60 }}>
-                    {isCorrect ? '✓' : theme.answerLabels[i]}
+                  <span className="font-black text-white" style={{ fontSize: 56, minWidth: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {isCorrect ? <CheckCircle2 size={48} /> : theme.answerLabels[i]}
                   </span>
                   <span className="font-bold text-white" style={{ fontSize: 44, lineHeight: 1.2, opacity: isCorrect ? 1 : 0.5 }}>
                     {answer}
@@ -697,8 +715,8 @@ export default function TVPage() {
 
           {/* Explanation */}
           {gs.question.explanation && (
-            <div className={cn('rounded-2xl p-5 text-white/80 text-center', theme.cardClass)} style={{ fontSize: 32 }}>
-              💡 {gs.question.explanation}
+            <div className={cn('rounded-2xl p-5 text-white/80 text-center flex items-center justify-center gap-3', theme.cardClass)} style={{ fontSize: 32 }}>
+              <Lightbulb size={32} className="text-yellow-400 shrink-0" /> {gs.question.explanation}
             </div>
           )}
 
@@ -715,8 +733,8 @@ export default function TVPage() {
       {/* LEADERBOARD */}
       {gs?.status === 'showing_leaderboard' && (
         <div className="flex-1 flex flex-col p-10 gap-8">
-          <div className="text-white font-black text-center" style={{ fontSize: 72 }}>
-            🏆 Leaderboard
+          <div className="text-white font-black text-center flex items-center justify-center gap-4" style={{ fontSize: 72 }}>
+            <Trophy size={72} className="text-yellow-400 shrink-0" /> Leaderboard
           </div>
           <Leaderboard players={gs.leaderboard} theme={theme} />
           <button
@@ -733,7 +751,7 @@ export default function TVPage() {
       {gs?.status === 'finished' && (
         <div className="flex-1 flex flex-col items-center p-10 gap-10">
           <div className="text-white font-black text-center" style={{ fontSize: 80 }}>
-            🎉 Game Over!
+            Game Over!
           </div>
           {gs.leaderboard.length >= 1 && <Podium players={gs.leaderboard} />}
           {gs.leaderboard.length > 3 && (
@@ -747,7 +765,7 @@ export default function TVPage() {
             className="px-12 py-5 rounded-2xl text-white font-black transition-all hover:scale-105"
             style={{ fontSize: 28, background: theme.accentColor }}
           >
-            🔄 New Game
+            <RefreshCw className="w-7 h-7 inline mr-3" />New Game
           </button>
         </div>
       )}

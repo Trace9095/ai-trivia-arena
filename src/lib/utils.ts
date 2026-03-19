@@ -17,17 +17,17 @@ export function calculatePoints(isCorrect: boolean, timeMs: number, difficulty: 
 }
 
 export const CATEGORIES = [
-  { id: 'general', name: 'General Knowledge', icon: '🎯', description: 'A bit of everything', isPremium: false },
-  { id: 'science', name: 'Science', icon: '🔬', description: 'Physics, chemistry, biology', isPremium: false },
-  { id: 'history', name: 'History', icon: '📜', description: 'World history and events', isPremium: false },
-  { id: 'geography', name: 'Geography', icon: '🌍', description: 'Countries, capitals, landmarks', isPremium: false },
-  { id: 'pop_culture', name: 'Pop Culture', icon: '🎬', description: 'Movies, TV, music, celebrities', isPremium: false },
-  { id: 'sports', name: 'Sports', icon: '⚽', description: 'Athletes and championships', isPremium: true },
-  { id: 'food_drink', name: 'Food & Drink', icon: '🍕', description: 'Cuisine and culinary arts', isPremium: true },
-  { id: 'technology', name: 'Technology', icon: '💻', description: 'Tech, gadgets, software', isPremium: true },
-  { id: 'movies_tv', name: 'Movies & TV', icon: '🎥', description: 'Cinema and television', isPremium: true },
-  { id: 'music', name: 'Music', icon: '🎵', description: 'Artists, songs, and genres', isPremium: true },
-  { id: 'colorado', name: 'Colorado & Local', icon: '🏔️', description: 'Royal Gorge region trivia', isPremium: false },
+  { id: 'general', name: 'General Knowledge', icon: 'Target', description: 'A bit of everything', isPremium: false },
+  { id: 'science', name: 'Science', icon: 'FlaskConical', description: 'Physics, chemistry, biology', isPremium: false },
+  { id: 'history', name: 'History', icon: 'Scroll', description: 'World history and events', isPremium: false },
+  { id: 'geography', name: 'Geography', icon: 'Globe', description: 'Countries, capitals, landmarks', isPremium: false },
+  { id: 'pop_culture', name: 'Pop Culture', icon: 'Clapperboard', description: 'Movies, TV, music, celebrities', isPremium: false },
+  { id: 'sports', name: 'Sports', icon: 'Trophy', description: 'Athletes and championships', isPremium: true },
+  { id: 'food_drink', name: 'Food & Drink', icon: 'UtensilsCrossed', description: 'Cuisine and culinary arts', isPremium: true },
+  { id: 'technology', name: 'Technology', icon: 'Laptop', description: 'Tech, gadgets, software', isPremium: true },
+  { id: 'movies_tv', name: 'Movies & TV', icon: 'Film', description: 'Cinema and television', isPremium: true },
+  { id: 'music', name: 'Music', icon: 'Music', description: 'Artists, songs, and genres', isPremium: true },
+  { id: 'colorado', name: 'Colorado & Local', icon: 'Mountain', description: 'Royal Gorge region trivia', isPremium: false },
 ] as const
 
 export type CategoryId = (typeof CATEGORIES)[number]['id']
