@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth'
+import { getSessionFromRequest } from '@/lib/auth'
 import { getDb } from '@/db'
 import { answers, questions, gamePlayers } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
@@ -9,7 +9,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getSession()
+  const session = await getSessionFromRequest(req)
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id: gameId } = await params

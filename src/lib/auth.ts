@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import { type NextRequest } from 'next/server'
 import { getDb } from '@/db'
 import { users, sessions, magicLinks } from '@/db/schema'
 import { eq, and, gt } from 'drizzle-orm'
@@ -91,4 +92,28 @@ export async function requireAuth(): Promise<{ userId: string; email: string }> 
     throw new Error('Unauthorized')
   }
   return session
+}
+
+export async function getSessionFromRequest(
+  req: NextRequest
+): Promise<{ userId: string; email: string } | null> {
+  // Check Bearer token first (mobile clients)
+  const authHeader = req.headers.get('authorization')
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.slice(7)
+    if (token) {
+      const db = getDb()
+      const [session] = await db
+        .select({ session: sessions, user: users })
+        .from(sessions)
+        .innerJoin(users, eq(sessions.userId, users.id))
+        .where(and(eq(sessions.token, token), gt(sessions.expiresAt, new Date())))
+        .limit(1)
+      if (session) {
+        return { userId: session.session.userId, email: session.user.email }
+      }
+    }
+  }
+  // Fall back to cookie-based session
+  return getSession()
 }

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth'
+import { getSessionFromRequest } from '@/lib/auth'
 import { getDb } from '@/db'
 import { games, gamePlayers, questions } from '@/db/schema'
 import { eq, desc } from 'drizzle-orm'
 import { generateQuestions } from '@/lib/claude'
 
-export async function GET() {
-  const session = await getSession()
+export async function GET(req: NextRequest) {
+  const session = await getSessionFromRequest(req)
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const db = getDb()
@@ -21,7 +21,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await getSession()
+  const session = await getSessionFromRequest(req)
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { category, difficulty, maxPlayers = 1 } = (await req.json()) as {

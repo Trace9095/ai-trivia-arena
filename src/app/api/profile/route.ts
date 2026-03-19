@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth'
+import { getSessionFromRequest } from '@/lib/auth'
 import { getDb } from '@/db'
 import { users } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
-export async function GET() {
-  const session = await getSession()
+export async function GET(req: NextRequest) {
+  const session = await getSessionFromRequest(req)
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const db = getDb()
@@ -16,7 +16,7 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
-  const session = await getSession()
+  const session = await getSessionFromRequest(req)
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { name, avatarUrl } = (await req.json()) as { name?: string; avatarUrl?: string }

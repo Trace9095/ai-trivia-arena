@@ -10,14 +10,15 @@ function getResend() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = (await req.json()) as { email: string }
+    const { email, platform } = (await req.json()) as { email: string; platform?: string }
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 })
     }
 
     const token = await createMagicLink(email)
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-    const magicUrl = `${appUrl}/api/auth/verify?token=${token}`
+    const platformParam = platform === 'mobile' ? '&platform=mobile' : ''
+    const magicUrl = `${appUrl}/api/auth/verify?token=${token}${platformParam}`
 
     const resend = getResend()
     const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'trivia@epicai.ai'
