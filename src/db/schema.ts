@@ -183,14 +183,20 @@ export const questionPool = pgTable('question_pool', {
 
 // Live multiplayer games (TV/Kahoot mode)
 // status flow: waiting → picking → active → showing_answer → showing_leaderboard → (loop) → finished
+// Always-on games: active → showing_leaderboard → active → ... (loops forever, never finished)
 export const liveGames = pgTable('live_games', {
   id: uuid('id').primaryKey().defaultRandom(),
   gameCode: text('game_code').notNull().unique(), // 4-char uppercase, e.g. "A7KR"
   hostUserId: uuid('host_user_id').references(() => users.id), // nullable — guests can host
 
+  // ── Always-on (BWW bar trivia mode) ──
+  isAlwaysOn: boolean('is_always_on').notNull().default(false),
+  alwaysOnDate: text('always_on_date'), // 'YYYY-MM-DD' — one always-on game per day
+  globalQuestionCount: integer('global_question_count').notNull().default(1), // Q# shown on TV
+
   // ── Game settings (chosen on /tv setup screen) ──
   theme: text('theme').notNull().default('classic'), // classic | neon | royalgorge | sportsbar
-  categoryMode: text('category_mode').notNull().default('single'), // single | rotating | random
+  categoryMode: text('category_mode').notNull().default('single'), // single | rotating | random | always_on
   singleCategory: text('single_category'), // used when categoryMode === 'single'
   difficulty: text('difficulty').notNull().default('medium'),
   roundCount: integer('round_count').notNull().default(1),

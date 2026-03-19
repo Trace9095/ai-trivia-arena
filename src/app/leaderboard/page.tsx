@@ -3,8 +3,8 @@ import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getDb } from '@/db'
-import { users, answers, liveAnswers } from '@/db/schema'
-import { desc, gte, sql } from 'drizzle-orm'
+import { users, liveAnswers } from '@/db/schema'
+import { desc, sql } from 'drizzle-orm'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,24 +42,6 @@ async function getWeeklyLeaderboard() {
     .limit(50)
 }
 
-async function getTodayLeaderboard() {
-  const db = getDb()
-  const todayStart = new Date()
-  todayStart.setHours(0, 0, 0, 0)
-  return db
-    .select({
-      id: users.id,
-      name: users.name,
-      email: users.email,
-      todayScore: sql<number>`coalesce(sum(${answers.pointsEarned})::int, 0)`,
-    })
-    .from(users)
-    .leftJoin(answers, sql`${answers.createdAt} > ${todayStart} AND ${answers.userId} = ${users.id}`)
-    .groupBy(users.id, users.name, users.email)
-    .having(sql`sum(${answers.pointsEarned}) > 0`)
-    .orderBy(desc(sql`coalesce(sum(${answers.pointsEarned})::int, 0)`))
-    .limit(50)
-}
 
 function getDisplayName(user: { name: string | null; email: string }) {
   return user.name ?? user.email.split('@')[0]
@@ -126,10 +108,9 @@ function EmptyState() {
 }
 
 export default async function LeaderboardPage() {
-  const [allTime, weekly, today] = await Promise.all([
+  const [allTime, weekly] = await Promise.all([
     getAllTimeLeaderboard(),
     getWeeklyLeaderboard().catch(() => []),
-    getTodayLeaderboard().catch(() => []),
   ])
 
   return (
@@ -142,28 +123,11 @@ export default async function LeaderboardPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="alltime">
+      <Tabs defaultValue="week">
         <TabsList className="w-full mb-6">
-          <TabsTrigger value="today" className="flex-1">Today</TabsTrigger>
           <TabsTrigger value="week" className="flex-1">This Week</TabsTrigger>
           <TabsTrigger value="alltime" className="flex-1">All Time</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="today">
-          {today.length === 0 ? <EmptyState /> : (
-            <div className="space-y-1">
-              {today.map((u, i) => (
-                <LeaderboardRow
-                  key={u.id}
-                  rank={i + 1}
-                  name={getDisplayName(u)}
-                  score={u.todayScore}
-                  sub="Today's score"
-                />
-              ))}
-            </div>
-          )}
-        </TabsContent>
 
         <TabsContent value="week">
           {weekly.filter((u) => u.weekScore > 0).length === 0 ? <EmptyState /> : (
