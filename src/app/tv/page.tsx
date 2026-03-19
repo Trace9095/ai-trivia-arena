@@ -1,10 +1,20 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import QRCode from 'qrcode'
 import { cn } from '@/lib/utils'
+import {
+  Trophy,
+  Target,
+  CheckCircle,
+  Flame,
+  AlertTriangle,
+  Maximize,
+  Loader2,
+} from 'lucide-react'
 
-// ─── Theme definitions (same palette as private/hosted mode) ─────────────────
+// ─── Theme definitions ────────────────────────────────────────────────────────
 const THEMES = {
   classic: {
     bgClass: 'bg-gradient-to-b from-[#0A0A14] via-[#1A1040] to-[#0A0A14]',
@@ -133,15 +143,15 @@ function LeaderboardStrip({
   accent: string
 }) {
   const shown = players.slice(0, 5)
-  const medals = ['🥇', '🥈', '🥉']
   return (
     <div className="flex items-center gap-4 overflow-hidden">
-      <span className="text-white/40 font-bold uppercase tracking-widest shrink-0" style={{ fontSize: 18 }}>
-        🏆 Leaders:
+      <span className="flex items-center gap-1.5 text-white/40 font-bold uppercase tracking-widest shrink-0" style={{ fontSize: 18 }}>
+        <Trophy size={18} />
+        Leaders:
       </span>
       {shown.map((p, i) => (
         <span key={p.id} className="flex items-center gap-1 shrink-0" style={{ fontSize: 20 }}>
-          <span>{medals[i] ?? `${i + 1}.`}</span>
+          <span className="text-white/50 font-bold">{i + 1}.</span>
           <span className="text-white font-bold truncate max-w-[160px]">{p.displayName}</span>
           <span className="font-black tabular-nums" style={{ color: accent }}>{p.score.toLocaleString()}</span>
         </span>
@@ -150,7 +160,7 @@ function LeaderboardStrip({
   )
 }
 
-// ─── Full leaderboard (5-second screen between questions) ─────────────────────
+// ─── Full leaderboard (between questions) ─────────────────────────────────────
 function LeaderboardScreen({
   state,
   theme,
@@ -162,14 +172,16 @@ function LeaderboardScreen({
   joinUrl: string
   countdown: number
 }) {
-  const medals = ['🥇', '🥈', '🥉']
   const { question } = state
 
   return (
     <div className="flex-1 flex flex-col p-10 gap-6" style={{ minHeight: 0 }}>
       {/* Header */}
       <div className="flex items-center justify-between shrink-0">
-        <div className="text-white font-black" style={{ fontSize: 52 }}>🏆 Leaderboard</div>
+        <div className="flex items-center gap-3 text-white font-black" style={{ fontSize: 52 }}>
+          <Trophy size={52} />
+          Leaderboard
+        </div>
         <div className="text-right">
           <div className="text-white/40 font-bold" style={{ fontSize: 22 }}>Next question in</div>
           <div className="font-black tabular-nums" style={{ fontSize: 64, color: theme.accentColor, lineHeight: 1 }}>
@@ -182,7 +194,7 @@ function LeaderboardScreen({
       {question?.correctAnswer && (
         <div className={cn('rounded-2xl px-6 py-4 shrink-0', theme.cardClass)} style={{ borderColor: '#10B981' }}>
           <div className="flex items-start gap-3">
-            <span style={{ fontSize: 28 }}>✅</span>
+            <CheckCircle size={28} className="text-green-400 shrink-0 mt-0.5" />
             <div>
               <span className="text-green-400 font-black" style={{ fontSize: 24 }}>
                 {question.correctAnswer}
@@ -210,15 +222,23 @@ function LeaderboardScreen({
               : {}
             }
           >
-            <span style={{ fontSize: 40, minWidth: 52, textAlign: 'center' }}>
-              {medals[i] ?? <span className="font-mono text-white/40" style={{ fontSize: 32 }}>{i + 1}</span>}
+            <span
+              className="font-black tabular-nums text-white/60"
+              style={{ fontSize: i < 3 ? 40 : 32, minWidth: 52, textAlign: 'center' }}
+            >
+              {i + 1}
             </span>
             <span className="flex-1 font-black text-white truncate" style={{ fontSize: 40 }}>{p.displayName}</span>
             <span className="text-white/40 font-bold" style={{ fontSize: 24 }}>{p.correctCount} correct</span>
             <span className="font-black tabular-nums" style={{ fontSize: 52, color: theme.accentColor }}>
               {p.score.toLocaleString()}
             </span>
-            {p.streak >= 3 && <span style={{ fontSize: 32 }}>🔥{p.streak}</span>}
+            {p.streak >= 3 && (
+              <span className="flex items-center gap-1" style={{ color: '#F97316' }}>
+                <Flame size={28} />
+                <span className="font-black" style={{ fontSize: 28 }}>{p.streak}</span>
+              </span>
+            )}
           </div>
         ))}
         {state.leaderboard.length === 0 && (
@@ -262,7 +282,10 @@ function QuestionScreen({
       {/* Header bar */}
       <div className="flex items-center justify-between px-10 py-5 shrink-0">
         <div className="flex items-center gap-4">
-          <span className="text-white font-black" style={{ fontSize: 28 }}>🎯 AI Trivia Arena</span>
+          <div className="flex items-center gap-2 text-white font-black" style={{ fontSize: 28 }}>
+            <Target size={28} />
+            AI Trivia Arena
+          </div>
           <span className="text-white/30 font-bold" style={{ fontSize: 24 }}>
             Q#{state.questionNumber}
           </span>
@@ -286,7 +309,7 @@ function QuestionScreen({
           className={cn('rounded-3xl px-10 py-8 text-white font-bold text-center shrink-0', theme.cardClass)}
           style={{ fontSize: question && question.text.length > 100 ? 44 : 56, lineHeight: 1.25 }}
         >
-          {question?.text ?? '⏳ Loading question...'}
+          {question?.text ?? 'Loading question...'}
         </div>
 
         {/* Answer grid */}
@@ -331,25 +354,11 @@ function QuestionScreen({
   )
 }
 
-// ─── Leaderboard countdown ────────────────────────────────────────────────────
-function LeaderboardCountdown({ endsAt }: { endsAt: string | null }) {
-  const [secs, setSecs] = useState(5)
-  useEffect(() => {
-    if (!endsAt) return
-    const tick = () => {
-      const left = Math.max(0, (new Date(endsAt).getTime() - Date.now()) / 1000)
-      setSecs(Math.ceil(left))
-    }
-    tick()
-    const id = setInterval(tick, 200)
-    return () => clearInterval(id)
-  }, [endsAt])
-  return secs
-}
-
 // ─── Main TV component ────────────────────────────────────────────────────────
-export default function TVPage() {
-  const [started, setStarted] = useState(false)
+function TVPageContent() {
+  const searchParams = useSearchParams()
+  const isKiosk = searchParams.get('kiosk') === 'true'
+
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [gameState, setGameState] = useState<AlwaysOnState | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -369,59 +378,36 @@ export default function TVPage() {
       setError(null)
       prevStatusRef.current = data.status
     } catch {
-      // Network error — just retry
+      // Network error — retry on next tick
     }
   }, [])
 
-  const enterFullscreen = async () => {
-    try {
-      await document.documentElement.requestFullscreen()
-      setIsFullscreen(true)
-    } catch { /* Fullscreen denied — continue anyway */ }
-    setStarted(true)
+  // Auto-start immediately on mount — no tap required
+  useEffect(() => {
     poll()
     pollRef.current = setInterval(poll, 1500)
-  }
 
-  useEffect(() => {
     const onFsChange = () => setIsFullscreen(!!document.fullscreenElement)
     document.addEventListener('fullscreenchange', onFsChange)
+
     return () => {
       document.removeEventListener('fullscreenchange', onFsChange)
       if (pollRef.current) clearInterval(pollRef.current)
     }
-  }, [])
+  }, [poll])
 
   const gs = gameState
   const themeKey = (gs?.theme ?? 'classic') as ThemeKey
   const theme = THEMES[themeKey] ?? THEMES.classic
   const joinUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://aitriviaarena.com'}/join`
 
-  // ── Splash screen ───────────────────────────────────────────────────────────
-  if (!started) {
+  // ── Loading ─────────────────────────────────────────────────────────────────
+  if (!gs && !error) {
     return (
-      <div
-        className={cn('min-h-screen flex flex-col items-center justify-center cursor-pointer select-none', theme.bgClass)}
-        onClick={enterFullscreen}
-      >
-        <div className="text-center space-y-8">
-          <div className="font-black text-white" style={{ fontSize: 96 }}>🎯</div>
-          <div className="font-black text-white" style={{ fontSize: 72 }}>AI Trivia Arena</div>
-          <div className="text-white/50 font-bold" style={{ fontSize: 36 }}>Always-on bar trivia</div>
-          <div
-            className="px-12 py-6 rounded-3xl font-black text-white animate-pulse"
-            style={{ fontSize: 36, background: THEMES.classic.accentColor + '33', border: `3px solid ${THEMES.classic.accentColor}` }}
-          >
-            Tap anywhere to start →
-          </div>
-          <a
-            href="/tv/private"
-            onClick={(e) => e.stopPropagation()}
-            className="block text-white/20 hover:text-white/50 transition-colors"
-            style={{ fontSize: 20 }}
-          >
-            Host a private game →
-          </a>
+      <div className={cn('min-h-screen flex items-center justify-center', theme.bgClass)}>
+        <div className="flex items-center gap-3 text-white/50 font-bold" style={{ fontSize: 36 }}>
+          <Loader2 size={36} className="animate-spin" />
+          Loading game...
         </div>
       </div>
     )
@@ -432,7 +418,7 @@ export default function TVPage() {
     return (
       <div className={cn('min-h-screen flex flex-col items-center justify-center', theme.bgClass)}>
         <div className="text-center space-y-4">
-          <div className="text-6xl">⚠️</div>
+          <AlertTriangle size={64} className="mx-auto text-yellow-400" />
           <div className="text-white font-black" style={{ fontSize: 40 }}>Setup required</div>
           <div className="text-white/60 font-bold" style={{ fontSize: 24 }}>{error}</div>
           <div className="text-white/40" style={{ fontSize: 20 }}>
@@ -443,20 +429,9 @@ export default function TVPage() {
     )
   }
 
-  // ── Loading ─────────────────────────────────────────────────────────────────
-  if (!gs) {
-    return (
-      <div className={cn('min-h-screen flex items-center justify-center', theme.bgClass)}>
-        <div className="text-white/50 font-bold animate-pulse" style={{ fontSize: 36 }}>
-          Loading game...
-        </div>
-      </div>
-    )
-  }
-
   // ── Game ─────────────────────────────────────────────────────────────────────
-  const lbCountdown = gs.status === 'showing_leaderboard'
-    ? Math.max(0, Math.ceil((new Date(gs.leaderboardEndsAt ?? Date.now()).getTime() - Date.now()) / 1000))
+  const lbCountdown = gs!.status === 'showing_leaderboard'
+    ? Math.max(0, Math.ceil((new Date(gs!.leaderboardEndsAt ?? Date.now()).getTime() - Date.now()) / 1000))
     : 0
 
   return (
@@ -464,23 +439,32 @@ export default function TVPage() {
       className={cn('min-h-screen flex flex-col overflow-hidden select-none', theme.bgClass)}
       style={{ fontFamily: 'var(--font-geist-sans), system-ui, sans-serif' }}
     >
-      {/* Fullscreen toggle (corner, small) */}
-      {!isFullscreen && (
+      {/* Fullscreen hint — hidden in kiosk mode */}
+      {!isKiosk && !isFullscreen && (
         <button
           onClick={() => document.documentElement.requestFullscreen().catch(() => {})}
-          className="fixed top-3 right-3 z-50 px-3 py-1.5 rounded-lg bg-white/10 text-white/50 hover:bg-white/20 text-sm font-bold"
+          className="fixed top-3 right-3 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white/50 hover:bg-white/20 text-sm font-bold"
         >
-          ⛶ Fullscreen
+          <Maximize size={14} />
+          Fullscreen
         </button>
       )}
 
-      {gs.status === 'active' && (
-        <QuestionScreen state={gs} theme={theme} joinUrl={joinUrl} />
+      {gs!.status === 'active' && (
+        <QuestionScreen state={gs!} theme={theme} joinUrl={joinUrl} />
       )}
 
-      {gs.status === 'showing_leaderboard' && (
-        <LeaderboardScreen state={gs} theme={theme} joinUrl={joinUrl} countdown={lbCountdown} />
+      {gs!.status === 'showing_leaderboard' && (
+        <LeaderboardScreen state={gs!} theme={theme} joinUrl={joinUrl} countdown={lbCountdown} />
       )}
     </div>
+  )
+}
+
+export default function TVPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0A0A14]" />}>
+      <TVPageContent />
+    </Suspense>
   )
 }

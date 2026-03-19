@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { NavBar } from '@/components/layout/NavBar'
 import { Footer } from '@/components/layout/Footer'
+import { NavWrapper } from '@/components/layout/NavWrapper'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/db'
 import { users } from '@/db/schema'
@@ -41,9 +42,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark`}>
       <body className="antialiased bg-background text-foreground min-h-screen flex flex-col">
-        <NavBar user={user} />
-        <main className="flex-1 pt-16">{children}</main>
-        <Footer />
+        <NavWrapper nav={<NavBar user={user} />} footer={<Footer />}>
+          {children}
+        </NavWrapper>
       </body>
     </html>
   )
