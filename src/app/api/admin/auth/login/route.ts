@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { getDb } from '@/db'
 import { users, sessions } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { setSessionCookie } from '@/lib/auth'
 import { seedAdminIfNeeded } from '@/lib/seed-admin'
 import { nanoid } from 'nanoid'
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
   const [user] = await db
     .select()
     .from(users)
-    .where(eq(users.email, email))
+    .where(eq(sql`lower(${users.email})`, email))
     .limit(1)
 
   if (!user || !user.passwordHash) {

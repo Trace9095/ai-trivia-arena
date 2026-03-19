@@ -8,7 +8,7 @@ let seeded = false
 export async function seedAdminIfNeeded(): Promise<void> {
   if (seeded) return
 
-  const adminEmail = process.env.ADMIN_EMAIL
+  const adminEmail = (process.env.ADMIN_EMAIL ?? '').toLowerCase()
   const adminPassword = process.env.ADMIN_PASSWORD
   const adminName = process.env.ADMIN_NAME || 'Trace Hildebrand'
 

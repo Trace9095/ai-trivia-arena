@@ -1,4 +1,4 @@
-import { pgTable, text, integer, boolean, timestamp, date, jsonb, uuid, real } from 'drizzle-orm/pg-core'
+import { pgTable, text, integer, boolean, timestamp, date, jsonb, uuid, real, index } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
 export const users = pgTable('users', {
@@ -161,6 +161,96 @@ export const costEvents = pgTable('cost_events', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
+// Pre-generated question pool — checked before calling Claude
+export const questionPool = pgTable('question_pool', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  category: text('category').notNull(),
+  difficulty: text('difficulty').notNull().default('medium'),
+  questionText: text('question_text').notNull(),
+  correctAnswer: text('correct_answer').notNull(),
+  wrongAnswers: jsonb('wrong_answers').notNull().$type<string[]>(),
+  explanation: text('explanation').notNull(),
+  timesUsed: integer('times_used').notNull().default(0),
+  lastUsedAt: timestamp('last_used_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => [
+  index('question_pool_category_difficulty_idx').on(t.category, t.difficulty),
+])
+
+// Live multiplayer games (TV/Kahoot mode)
+// status flow: waiting → picking → active → showing_answer → showing_leaderboard → (loop) → finished
+export const liveGames = pgTable('live_games', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  gameCode: text('game_code').notNull().unique(), // 4-char uppercase, e.g. "A7KR"
+  hostUserId: uuid('host_user_id').references(() => users.id), // nullable — guests can host
+
+  // ── Game settings (chosen on /tv setup screen) ──
+  theme: text('theme').notNull().default('classic'), // classic | neon | royalgorge | sportsbar
+  categoryMode: text('category_mode').notNull().default('single'), // single | rotating | random
+  singleCategory: text('single_category'), // used when categoryMode === 'single'
+  difficulty: text('difficulty').notNull().default('medium'),
+  roundCount: integer('round_count').notNull().default(1),
+  questionsPerRound: integer('questions_per_round').notNull().default(10),
+  timePerQuestion: integer('time_per_question').notNull().default(20), // seconds
+
+  // ── Game state ──
+  status: text('status').notNull().default('waiting'),
+  currentRound: integer('current_round').notNull().default(0),        // 0-indexed
+  currentQuestionIndex: integer('current_question_index').notNull().default(0), // within round
+  questionStartedAt: timestamp('question_started_at'),
+  // Category picking state
+  pickerPlayerIndex: integer('picker_player_index').notNull().default(0),
+  categoryPickDeadline: timestamp('category_pick_deadline'),
+
+  // Rounds stored inline for fast polling — [{category, questions:[...]}]
+  roundsJson: jsonb('rounds_json').notNull().default('[]').$type<Array<{
+    category: string
+    questions: Array<{
+      questionText: string
+      correctAnswer: string
+      wrongAnswers: string[]
+      explanation: string
+    }>
+  }>>(),
+
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  startedAt: timestamp('started_at'),
+  finishedAt: timestamp('finished_at'),
+}, (t) => [
+  index('live_games_game_code_idx').on(t.gameCode),
+  index('live_games_status_idx').on(t.status),
+])
+
+// Players who joined a live game
+export const livePlayers = pgTable('live_players', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  gameId: uuid('game_id').notNull().references(() => liveGames.id),
+  displayName: text('display_name').notNull(),
+  userId: uuid('user_id').references(() => users.id), // nullable for guests
+  score: integer('score').notNull().default(0),
+  correctCount: integer('correct_count').notNull().default(0),
+  streak: integer('streak').notNull().default(0),
+  joinedAt: timestamp('joined_at').defaultNow().notNull(),
+}, (t) => [
+  index('live_players_game_id_idx').on(t.gameId),
+])
+
+// Answers submitted in live games
+export const liveAnswers = pgTable('live_answers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  gameId: uuid('game_id').notNull().references(() => liveGames.id),
+  playerId: uuid('player_id').notNull().references(() => livePlayers.id),
+  questionIndex: integer('question_index').notNull(),
+  roundIndex: integer('round_index').notNull().default(0),
+  selectedAnswer: text('selected_answer').notNull(),
+  isCorrect: boolean('is_correct').notNull(),
+  timeMs: integer('time_ms').notNull(),
+  pointsEarned: integer('points_earned').notNull().default(0),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => [
+  index('live_answers_game_player_idx').on(t.gameId, t.playerId, t.questionIndex),
+])
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   gamePlayers: many(gamePlayers),
@@ -210,4 +300,21 @@ export const errorLogsRelations = relations(errorLogs, ({ one }) => ({
 
 export const revenueEventsRelations = relations(revenueEvents, ({ one }) => ({
   user: one(users, { fields: [revenueEvents.userId], references: [users.id] }),
+}))
+
+export const liveGamesRelations = relations(liveGames, ({ one, many }) => ({
+  host: one(users, { fields: [liveGames.hostUserId], references: [users.id] }),
+  players: many(livePlayers),
+  answers: many(liveAnswers),
+}))
+
+export const livePlayersRelations = relations(livePlayers, ({ one, many }) => ({
+  game: one(liveGames, { fields: [livePlayers.gameId], references: [liveGames.id] }),
+  user: one(users, { fields: [livePlayers.userId], references: [users.id] }),
+  answers: many(liveAnswers),
+}))
+
+export const liveAnswersRelations = relations(liveAnswers, ({ one }) => ({
+  game: one(liveGames, { fields: [liveAnswers.gameId], references: [liveGames.id] }),
+  player: one(livePlayers, { fields: [liveAnswers.playerId], references: [livePlayers.id] }),
 }))

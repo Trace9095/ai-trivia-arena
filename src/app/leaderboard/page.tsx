@@ -1,15 +1,16 @@
-import { Trophy, Medal, Crown } from 'lucide-react'
+import { Trophy, Crown, Flame } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getDb } from '@/db'
-import { users } from '@/db/schema'
-import { desc } from 'drizzle-orm'
+import { users, answers, liveAnswers } from '@/db/schema'
+import { desc, gte, sql } from 'drizzle-orm'
 
 export const dynamic = 'force-dynamic'
 
-export default async function LeaderboardPage() {
+async function getAllTimeLeaderboard() {
   const db = getDb()
-  const leaderboard = await db
+  return db
     .select({
       id: users.id,
       name: users.name,
@@ -21,62 +22,182 @@ export default async function LeaderboardPage() {
     .from(users)
     .orderBy(desc(users.totalScore))
     .limit(50)
+}
 
-  const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Crown className="w-5 h-5 text-yellow-400" />
-    if (rank === 2) return <Medal className="w-5 h-5 text-gray-400" />
-    if (rank === 3) return <Medal className="w-5 h-5 text-amber-600" />
-    return <span className="font-mono text-muted-foreground w-5 text-center text-sm">{rank}</span>
-  }
+async function getWeeklyLeaderboard() {
+  const db = getDb()
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  // Players with most points in live games this week
+  return db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      weekScore: sql<number>`coalesce(sum(${liveAnswers.pointsEarned})::int, 0)`,
+    })
+    .from(users)
+    .leftJoin(liveAnswers, sql`${liveAnswers.createdAt} > ${weekAgo}`)
+    .groupBy(users.id, users.name, users.email)
+    .orderBy(desc(sql`coalesce(sum(${liveAnswers.pointsEarned})::int, 0)`))
+    .limit(50)
+}
 
-  const getDisplayName = (user: { name: string | null; email: string }) =>
-    user.name ?? user.email.split('@')[0]
+async function getTodayLeaderboard() {
+  const db = getDb()
+  const todayStart = new Date()
+  todayStart.setHours(0, 0, 0, 0)
+  return db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      todayScore: sql<number>`coalesce(sum(${answers.pointsEarned})::int, 0)`,
+    })
+    .from(users)
+    .leftJoin(answers, sql`${answers.createdAt} > ${todayStart} AND ${answers.userId} = ${users.id}`)
+    .groupBy(users.id, users.name, users.email)
+    .having(sql`sum(${answers.pointsEarned}) > 0`)
+    .orderBy(desc(sql`coalesce(sum(${answers.pointsEarned})::int, 0)`))
+    .limit(50)
+}
+
+function getDisplayName(user: { name: string | null; email: string }) {
+  return user.name ?? user.email.split('@')[0]
+}
+
+function RankBadge({ rank }: { rank: number }) {
+  if (rank === 1) return <div className="w-9 h-9 rounded-full bg-yellow-500/20 border border-yellow-500/50 flex items-center justify-center"><Crown className="w-5 h-5 text-yellow-400" /></div>
+  if (rank === 2) return <div className="w-9 h-9 rounded-full bg-gray-500/20 border border-gray-500/50 flex items-center justify-center"><span className="text-sm font-bold text-gray-300">2</span></div>
+  if (rank === 3) return <div className="w-9 h-9 rounded-full bg-amber-700/20 border border-amber-700/50 flex items-center justify-center"><span className="text-sm font-bold text-amber-600">3</span></div>
+  return <div className="w-9 h-9 flex items-center justify-center"><span className="font-mono text-muted-foreground text-sm">{rank}</span></div>
+}
+
+function LeaderboardRow({
+  rank,
+  name,
+  score,
+  sub,
+  streak,
+}: {
+  rank: number
+  name: string
+  score: number
+  sub?: string
+  streak?: number
+}) {
+  const isTop3 = rank <= 3
+  return (
+    <div
+      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+        isTop3 ? 'bg-yellow-950/10 border border-yellow-900/30' : 'hover:bg-muted/20'
+      }`}
+    >
+      <RankBadge rank={rank} />
+      <Avatar className="w-9 h-9 shrink-0">
+        <AvatarFallback className="bg-blue-950 text-blue-400 font-bold text-sm">
+          {name[0]?.toUpperCase() ?? '?'}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold truncate text-sm">{name}</p>
+        {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
+      </div>
+      {streak != null && streak >= 3 && (
+        <div className="flex items-center gap-1 text-orange-400 text-xs font-bold">
+          <Flame className="w-3 h-3" />
+          {streak}
+        </div>
+      )}
+      <div className="text-right shrink-0">
+        <p className="font-mono font-bold text-blue-400 text-sm">{score.toLocaleString()}</p>
+        <p className="text-xs text-muted-foreground">pts</p>
+      </div>
+    </div>
+  )
+}
+
+function EmptyState() {
+  return (
+    <Card className="p-10 text-center">
+      <Trophy className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+      <p className="text-muted-foreground text-sm">No data yet. Start playing!</p>
+    </Card>
+  )
+}
+
+export default async function LeaderboardPage() {
+  const [allTime, weekly, today] = await Promise.all([
+    getAllTimeLeaderboard(),
+    getWeeklyLeaderboard().catch(() => []),
+    getTodayLeaderboard().catch(() => []),
+  ])
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-xl mx-auto px-4 py-8">
       <div className="flex items-center gap-3 mb-8">
         <Trophy className="w-8 h-8 text-yellow-400" />
         <div>
           <h1 className="text-3xl font-bold">Leaderboard</h1>
-          <p className="text-muted-foreground">Top trivia players of all time</p>
+          <p className="text-muted-foreground text-sm">Top trivia players</p>
         </div>
       </div>
 
-      {leaderboard.length === 0 ? (
-        <Card className="p-12 text-center">
-          <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">No players yet. Be the first!</p>
-        </Card>
-      ) : (
-        <div className="space-y-2">
-          {leaderboard.map((user, i) => {
-            const rank = i + 1
-            const name = getDisplayName(user)
-            return (
-              <Card
-                key={user.id}
-                className={`p-4 flex items-center gap-4 ${rank <= 3 ? 'border-yellow-800/50 bg-yellow-950/10' : ''}`}
-              >
-                <div className="w-8 flex justify-center">{getRankIcon(rank)}</div>
-                <Avatar className="w-10 h-10">
-                  <AvatarFallback className="bg-blue-950 text-blue-400 font-bold">
-                    {name[0]?.toUpperCase() ?? '?'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold truncate">{name}</p>
-                  <p className="text-xs text-muted-foreground">{user.gamesPlayed} games played</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-mono font-bold text-blue-400">{user.totalScore.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground">pts</p>
-                </div>
-                {user.streak > 0 && <div className="text-orange-400 text-sm font-bold">🔥 {user.streak}</div>}
-              </Card>
-            )
-          })}
-        </div>
-      )}
+      <Tabs defaultValue="alltime">
+        <TabsList className="w-full mb-6">
+          <TabsTrigger value="today" className="flex-1">Today</TabsTrigger>
+          <TabsTrigger value="week" className="flex-1">This Week</TabsTrigger>
+          <TabsTrigger value="alltime" className="flex-1">All Time</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="today">
+          {today.length === 0 ? <EmptyState /> : (
+            <div className="space-y-1">
+              {today.map((u, i) => (
+                <LeaderboardRow
+                  key={u.id}
+                  rank={i + 1}
+                  name={getDisplayName(u)}
+                  score={u.todayScore}
+                  sub="Today's score"
+                />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="week">
+          {weekly.filter((u) => u.weekScore > 0).length === 0 ? <EmptyState /> : (
+            <div className="space-y-1">
+              {weekly.filter((u) => u.weekScore > 0).map((u, i) => (
+                <LeaderboardRow
+                  key={u.id}
+                  rank={i + 1}
+                  name={getDisplayName(u)}
+                  score={u.weekScore}
+                  sub="This week"
+                />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="alltime">
+          {allTime.length === 0 ? <EmptyState /> : (
+            <div className="space-y-1">
+              {allTime.map((u, i) => (
+                <LeaderboardRow
+                  key={u.id}
+                  rank={i + 1}
+                  name={getDisplayName(u)}
+                  score={u.totalScore}
+                  sub={`${u.gamesPlayed} games played`}
+                  streak={u.streak}
+                />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

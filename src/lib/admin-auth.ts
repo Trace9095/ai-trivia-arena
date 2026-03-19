@@ -14,3 +14,10 @@ export async function requireAdmin(): Promise<{ userId: string; email: string }>
   }
   return session
 }
+
+/** For API routes — returns null instead of redirecting */
+export async function getAdminSession(): Promise<{ userId: string; email: string } | null> {
+  const session = await getSession()
+  if (!session || !isAdmin(session.email)) return null
+  return session
+}
