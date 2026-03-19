@@ -13,6 +13,10 @@ export const users = pgTable('users', {
   longestStreak: integer('longest_streak').notNull().default(0),
   lastPlayedAt: timestamp('last_played_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  // Stripe billing
+  stripeCustomerId: text('stripe_customer_id'),
+  isPro: boolean('is_pro').notNull().default(false),
+  proExpiresAt: timestamp('pro_expires_at'),
 })
 
 export const games = pgTable('games', {
