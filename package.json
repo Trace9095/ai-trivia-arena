@@ -1,6 +1,7 @@
 {
   "name": "ai-trivia-arena",
-  "version": "0.2.0",
+  "version": "1.0.0",
+  "description": "AI-powered trivia game with Claude Haiku question generation, daily challenges, and global leaderboards",
   "private": true,
   "scripts": {
     "dev": "next dev",
