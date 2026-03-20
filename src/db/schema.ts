@@ -212,6 +212,9 @@ export const liveGames = pgTable('live_games', {
   pickerPlayerIndex: integer('picker_player_index').notNull().default(0),
   categoryPickDeadline: timestamp('category_pick_deadline'),
 
+  // Category voting state (always-on mode: every 5 questions a vote is held)
+  votingOptions: jsonb('voting_options').$type<string[] | null>().default(null),
+
   // Rounds stored inline for fast polling — [{category, questions:[...]}]
   roundsJson: jsonb('rounds_json').notNull().default('[]').$type<Array<{
     category: string
@@ -243,6 +246,18 @@ export const livePlayers = pgTable('live_players', {
   joinedAt: timestamp('joined_at').defaultNow().notNull(),
 }, (t) => [
   index('live_players_game_id_idx').on(t.gameId),
+])
+
+// Category votes cast during a voting phase (between questions every 5 rounds)
+export const liveVotes = pgTable('live_votes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  gameId: uuid('game_id').notNull().references(() => liveGames.id),
+  playerId: uuid('player_id').notNull().references(() => livePlayers.id),
+  category: text('category').notNull(),
+  questionNumber: integer('question_number').notNull(), // globalQuestionCount at time of vote
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (t) => [
+  index('live_votes_game_player_q_idx').on(t.gameId, t.playerId, t.questionNumber),
 ])
 
 // Answers submitted in live games
@@ -316,6 +331,12 @@ export const liveGamesRelations = relations(liveGames, ({ one, many }) => ({
   host: one(users, { fields: [liveGames.hostUserId], references: [users.id] }),
   players: many(livePlayers),
   answers: many(liveAnswers),
+  votes: many(liveVotes),
+}))
+
+export const liveVotesRelations = relations(liveVotes, ({ one }) => ({
+  game: one(liveGames, { fields: [liveVotes.gameId], references: [liveGames.id] }),
+  player: one(livePlayers, { fields: [liveVotes.playerId], references: [livePlayers.id] }),
 }))
 
 export const livePlayersRelations = relations(livePlayers, ({ one, many }) => ({
