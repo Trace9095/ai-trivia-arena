@@ -27,21 +27,15 @@ function generateCode(): string {
 
 async function getAlwaysOnQuestions(): Promise<Array<{ questionText: string; correctAnswer: string; wrongAnswers: string[]; explanation: string }>> {
   // Load 2 questions from each of 10 categories = 20 total
-  let firstError: Error | null = null
   const batches = await Promise.all(
     CATEGORY_ROTATION.map((cat) =>
       getQuestionsFromPool(cat, 'medium', 2).catch((err) => {
-        const error = err instanceof Error ? err : new Error(String(err))
-        console.error(`getQuestionsFromPool failed for ${cat}/medium:`, error.message)
-        if (!firstError) firstError = error
+        console.error(`getQuestionsFromPool failed for ${cat}/medium:`, err)
         return [] as Array<{ questionText: string; correctAnswer: string; wrongAnswers: string[]; explanation: string }>
       })
     )
   )
   const all = batches.flat()
-  if (all.length === 0 && firstError) {
-    throw new Error(`DB error: ${(firstError as Error).message}`)
-  }
   // Fisher-Yates shuffle
   for (let i = all.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))

@@ -1,6 +1,6 @@
 import { getDb } from '@/db'
 import { questionPool } from '@/db/schema'
-import { eq, and, asc, sql } from 'drizzle-orm'
+import { eq, and, asc, inArray, sql } from 'drizzle-orm'
 import { type GeneratedQuestion, generateQuestions } from '@/lib/claude'
 
 /**
@@ -29,7 +29,7 @@ export async function getQuestionsFromPool(
     await db
       .update(questionPool)
       .set({ timesUsed: sql`${questionPool.timesUsed} + 1`, lastUsedAt: new Date() })
-      .where(sql`${questionPool.id} = ANY(${ids})`)
+      .where(inArray(questionPool.id, ids))
 
     return pooled.map((q) => ({
       questionText: q.questionText,
