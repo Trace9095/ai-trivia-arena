@@ -54,7 +54,6 @@ export async function POST(request: Request) {
           })
           .where(eq(users.id, userId))
 
-        console.log('[api/billing/webhook] checkout.session.completed: user upgraded', { userId, plan: session.metadata?.plan })
         break
       }
 
@@ -72,7 +71,6 @@ export async function POST(request: Request) {
           .set({ isPro: isActive, proExpiresAt: isActive ? periodEnd : null })
           .where(eq(users.stripeCustomerId, customerId))
 
-        console.log('[api/billing/webhook] customer.subscription.updated', { customerId, status: subscription.status })
         break
       }
 
@@ -86,7 +84,6 @@ export async function POST(request: Request) {
           .set({ isPro: false, proExpiresAt: null })
           .where(eq(users.stripeCustomerId, customerId))
 
-        console.log('[api/billing/webhook] customer.subscription.deleted', { customerId })
         break
       }
 

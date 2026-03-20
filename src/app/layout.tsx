@@ -16,6 +16,10 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#7C3AED' },
+    { media: '(prefers-color-scheme: light)', color: '#7C3AED' },
+  ],
 }
 
 export const metadata: Metadata = {
@@ -53,10 +57,6 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   manifest: '/site.webmanifest',
-  themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#7C3AED' },
-    { media: '(prefers-color-scheme: light)', color: '#7C3AED' },
-  ],
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
