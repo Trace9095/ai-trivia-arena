@@ -128,6 +128,35 @@
   }
 }
 
+/* ─── TV Mode Animations ────────────────────────────────────────────────────── */
+
+@keyframes tv-fade-in-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tv-glow-pulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(16,185,129,0.45), 0 0 60px rgba(16,185,129,0.2); }
+  50%       { box-shadow: 0 0 48px rgba(16,185,129,0.7), 0 0 100px rgba(16,185,129,0.35); }
+}
+
+@keyframes tv-correct-pop {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.07); }
+  65%  { transform: scale(1.04); }
+  100% { transform: scale(1.04); }
+}
+
+@keyframes tv-scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tv-times-up {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
 /* Fix mobile viewport height — prevents navbar "floating island" bug on iOS/Android */
 @supports (height: 100dvh) {
   .min-h-screen {

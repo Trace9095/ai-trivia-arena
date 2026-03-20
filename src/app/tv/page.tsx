@@ -11,6 +11,10 @@ import {
   Flame,
   AlertTriangle,
   Loader2,
+  Crown,
+  Medal,
+  Users,
+  Zap,
 } from 'lucide-react'
 
 // ─── Theme definitions ────────────────────────────────────────────────────────
@@ -50,6 +54,7 @@ const THEMES = {
 } as const
 
 type ThemeKey = keyof typeof THEMES
+type DisplayPhase = 'question' | 'revealing' | 'leaderboard'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AlwaysOnState {
@@ -77,16 +82,78 @@ interface AlwaysOnState {
   }>
 }
 
-// ─── QR Code ─────────────────────────────────────────────────────────────────
-function QRCodeImg({ url, size = 160 }: { url: string; size?: number }) {
+// ─── QR Code Panel ────────────────────────────────────────────────────────────
+function QRCodePanel({
+  url,
+  gameCode,
+  accent,
+  compact = false,
+}: {
+  url: string
+  gameCode: string
+  accent: string
+  compact?: boolean
+}) {
   const [src, setSrc] = useState('')
+  const size = compact ? 96 : 120
+
   useEffect(() => {
-    QRCode.toDataURL(url, { width: size, margin: 1, color: { light: '#ffffff', dark: '#000000' } })
+    QRCode.toDataURL(url, {
+      width: size * 2,
+      margin: 1,
+      color: { light: '#ffffff', dark: '#111111' },
+    })
       .then(setSrc)
       .catch(() => setSrc(''))
   }, [url, size])
-  if (!src) return <div style={{ width: size, height: size }} className="bg-white/10 rounded-xl animate-pulse" />
-  return <img src={src} alt="QR Code" className="rounded-xl" style={{ width: size, height: size }} />
+
+  return (
+    <div
+      className="flex items-center gap-3 rounded-2xl border border-white/15 shrink-0"
+      style={{
+        background: 'rgba(255,255,255,0.06)',
+        padding: compact ? '10px 14px' : '12px 16px',
+      }}
+    >
+      {/* White-background QR */}
+      <div className="bg-white rounded-xl shrink-0" style={{ padding: 6 }}>
+        {src ? (
+          <img
+            src={src}
+            alt="QR Code to join game"
+            style={{ width: size, height: size, display: 'block' }}
+          />
+        ) : (
+          <div
+            className="animate-pulse rounded-lg"
+            style={{ width: size, height: size, background: '#e5e7eb' }}
+          />
+        )}
+      </div>
+
+      {/* Text info */}
+      <div className="flex flex-col gap-0.5">
+        <span
+          className="font-bold text-white/40 uppercase tracking-widest"
+          style={{ fontSize: compact ? 12 : 13 }}
+        >
+          Scan to join
+        </span>
+        <span
+          className="font-black text-white"
+          style={{ fontSize: compact ? 16 : 18, lineHeight: 1.25 }}
+        >
+          aitriviaarena.com/join
+        </span>
+        <span
+          className="font-black tabular-nums tracking-[0.18em] mt-0.5"
+          style={{ fontSize: compact ? 22 : 26, color: accent, lineHeight: 1 }}
+        >
+          {gameCode}
+        </span>
+      </div>
+    </div>
+  )
 }
 
 // ─── Countdown timer ─────────────────────────────────────────────────────────
@@ -116,19 +183,108 @@ function CountdownTimer({
   const isUrgent = timeLeft <= 5
 
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex flex-col items-center gap-1.5">
       <div
         className={cn('font-black tabular-nums', isUrgent && 'animate-pulse')}
-        style={{ fontSize: 72, color: isUrgent ? '#EF4444' : color, lineHeight: 1 }}
+        style={{ fontSize: 76, color: isUrgent ? '#EF4444' : color, lineHeight: 1 }}
       >
         {Math.ceil(timeLeft)}
       </div>
-      <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden" style={{ width: 120 }}>
+      <div
+        className="h-2.5 bg-white/10 rounded-full overflow-hidden"
+        style={{ width: 128 }}
+      >
         <div
-          className="h-full rounded-full transition-all duration-200"
-          style={{ width: `${pct}%`, background: isUrgent ? '#EF4444' : color }}
+          className="h-full rounded-full"
+          style={{
+            width: `${pct}%`,
+            background: isUrgent ? '#EF4444' : color,
+            transition: 'width 0.2s linear, background 0.3s ease',
+          }}
         />
       </div>
+    </div>
+  )
+}
+
+// ─── Answer card — handles normal + reveal animation ─────────────────────────
+function AnswerCard({
+  answer,
+  label,
+  color,
+  phase,
+  isCorrect,
+  index,
+}: {
+  answer: string
+  label: string
+  color: string
+  phase: DisplayPhase
+  isCorrect: boolean
+  index: number
+}) {
+  const revealing = phase === 'revealing'
+  const wrong = revealing && !isCorrect
+  const correct = revealing && isCorrect
+
+  return (
+    <div
+      className="rounded-3xl flex items-center gap-5 px-8"
+      style={{
+        background: correct
+          ? 'rgba(5,46,22,0.95)'
+          : wrong
+          ? 'rgba(17,24,39,0.7)'
+          : color + 'CC',
+        border: `4px solid ${correct ? '#10B981' : wrong ? '#374151' : color}`,
+        minHeight: 112,
+        opacity: wrong ? 0.42 : 1,
+        transform: correct ? 'scale(1.04)' : 'scale(1)',
+        transition: `
+          background 0.65s cubic-bezier(0.4,0,0.2,1),
+          border-color 0.65s cubic-bezier(0.4,0,0.2,1),
+          opacity 0.65s cubic-bezier(0.4,0,0.2,1),
+          transform 0.65s cubic-bezier(0.4,0,0.2,1)
+        `,
+        transitionDelay: wrong ? `${index * 70}ms` : '0ms',
+        animation: correct
+          ? 'tv-correct-pop 0.7s cubic-bezier(0.4,0,0.2,1) forwards, tv-glow-pulse 2s ease-in-out 0.6s infinite'
+          : 'none',
+      }}
+    >
+      {/* Letter label */}
+      <span
+        className="font-black shrink-0"
+        style={{
+          fontSize: 56,
+          minWidth: 60,
+          lineHeight: 1,
+          color: correct ? '#10B981' : wrong ? '#4b5563' : 'white',
+          transition: 'color 0.65s ease',
+        }}
+      >
+        {label}
+      </span>
+
+      {/* Answer text */}
+      <span
+        className="font-bold flex-1"
+        style={{
+          fontSize: answer.length > 40 ? 34 : 44,
+          lineHeight: 1.2,
+          color: correct ? '#d1fae5' : wrong ? '#6b7280' : 'white',
+          transition: 'color 0.65s ease',
+        }}
+      >
+        {answer}
+      </span>
+
+      {/* Correct checkmark */}
+      {correct && (
+        <span className="shrink-0 ml-2">
+          <CheckCircle size={48} color="#10B981" strokeWidth={2.5} />
+        </span>
+      )}
     </div>
   )
 }
@@ -143,125 +299,222 @@ function LeaderboardStrip({
 }) {
   const shown = players.slice(0, 5)
   return (
-    <div className="flex items-center gap-4 overflow-hidden">
-      <span className="flex items-center gap-1.5 text-white/40 font-bold uppercase tracking-widest shrink-0" style={{ fontSize: 18 }}>
-        <Trophy size={18} />
-        Leaders:
+    <div className="flex items-center gap-5 overflow-hidden min-w-0">
+      <span
+        className="flex items-center gap-2 text-white/35 font-bold uppercase tracking-widest shrink-0"
+        style={{ fontSize: 17 }}
+      >
+        <Trophy size={17} />
+        Top players:
       </span>
       {shown.map((p, i) => (
-        <span key={p.id} className="flex items-center gap-1 shrink-0" style={{ fontSize: 20 }}>
-          <span className="text-white/50 font-bold">{i + 1}.</span>
-          <span className="text-white font-bold truncate max-w-[160px]">{p.displayName}</span>
-          <span className="font-black tabular-nums" style={{ color: accent }}>{p.score.toLocaleString()}</span>
+        <span key={p.id} className="flex items-center gap-1.5 shrink-0" style={{ fontSize: 20 }}>
+          <span className="text-white/40 font-bold">{i + 1}.</span>
+          <span className="text-white font-bold truncate max-w-[180px]">{p.displayName}</span>
+          <span className="font-black tabular-nums" style={{ color: accent }}>
+            {p.score.toLocaleString()}
+          </span>
         </span>
       ))}
     </div>
   )
 }
 
-// ─── Full leaderboard (between questions) ─────────────────────────────────────
+// ─── Rank badge (top 3 get icons, rest get numbers) ──────────────────────────
+function RankBadge({ rank }: { rank: number }) {
+  if (rank === 1) return <Crown size={44} style={{ color: '#F59E0B' }} />
+  if (rank === 2) return <Medal size={40} style={{ color: '#9CA3AF' }} />
+  if (rank === 3) return <Medal size={40} style={{ color: '#CD7F32' }} />
+  return (
+    <span
+      className="font-black tabular-nums text-white/35"
+      style={{ fontSize: 32, minWidth: 44, textAlign: 'center', lineHeight: 1 }}
+    >
+      {rank}
+    </span>
+  )
+}
+
+// ─── Full leaderboard screen ──────────────────────────────────────────────────
 function LeaderboardScreen({
   state,
   theme,
   joinUrl,
   countdown,
   isKiosk,
+  isMilestone,
 }: {
   state: AlwaysOnState
-  theme: typeof THEMES[ThemeKey]
+  theme: (typeof THEMES)[ThemeKey]
   joinUrl: string
   countdown: number
   isKiosk?: boolean
+  isMilestone: boolean
 }) {
-  const { question } = state
+  const maxPlayers = isMilestone ? 8 : 5
 
   return (
-    <div className="flex-1 flex flex-col p-10 gap-6" style={{ minHeight: 0 }}>
+    <div
+      className="flex-1 flex flex-col gap-5"
+      style={{ minHeight: 0, padding: isMilestone ? '36px 44px' : '28px 44px' }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3 text-white font-black" style={{ fontSize: 52 }}>
-          <Trophy size={52} />
-          Leaderboard
+        <div
+          className="flex items-center gap-4 text-white font-black"
+          style={{ fontSize: isMilestone ? 62 : 50 }}
+        >
+          <Trophy
+            size={isMilestone ? 62 : 50}
+            style={{ color: '#F59E0B' }}
+            strokeWidth={2}
+          />
+          {isMilestone ? (
+            <span>
+              Round Complete
+              <span
+                className="ml-4 font-bold"
+                style={{ fontSize: isMilestone ? 32 : 26, color: '#F59E0B', opacity: 0.8 }}
+              >
+                Q#{state.questionNumber}
+              </span>
+            </span>
+          ) : (
+            <span>
+              Leaderboard
+              <span
+                className="ml-4 font-bold"
+                style={{ fontSize: 28, color: theme.accentColor, opacity: 0.7 }}
+              >
+                Q#{state.questionNumber}
+              </span>
+            </span>
+          )}
         </div>
+
+        {/* Countdown */}
         <div className="text-right">
-          <div className="text-white/40 font-bold" style={{ fontSize: 22 }}>Next question in</div>
-          <div className="font-black tabular-nums" style={{ fontSize: 64, color: theme.accentColor, lineHeight: 1 }}>
+          <div className="text-white/35 font-bold" style={{ fontSize: 20 }}>
+            Next question in
+          </div>
+          <div
+            className="font-black tabular-nums"
+            style={{ fontSize: 68, color: theme.accentColor, lineHeight: 1 }}
+          >
             {countdown}s
           </div>
         </div>
       </div>
 
-      {/* Answer reveal */}
-      {question?.correctAnswer && (
-        <div className={cn('rounded-2xl px-6 py-4 shrink-0', theme.cardClass)} style={{ borderColor: '#10B981' }}>
-          <div className="flex items-start gap-3">
-            <CheckCircle size={28} className="text-green-400 shrink-0 mt-0.5" />
-            <div>
-              <span className="text-green-400 font-black" style={{ fontSize: 24 }}>
-                {question.correctAnswer}
-              </span>
-              {question.explanation && (
-                <span className="text-white/70 font-bold ml-3" style={{ fontSize: 22 }}>
-                  — {question.explanation}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Player list */}
+      {/* Player rows */}
       <div className="flex-1 flex flex-col gap-3 min-h-0 overflow-hidden">
-        {state.leaderboard.slice(0, 8).map((p, i) => (
-          <div
-            key={p.id}
-            className={cn('flex items-center gap-4 rounded-2xl px-6 py-3 shrink-0', theme.cardClass)}
-            style={
-              i === 0 ? { background: '#F59E0B15', borderColor: '#F59E0B66' }
-              : i === 1 ? { background: '#9CA3AF15', borderColor: '#9CA3AF66' }
-              : i === 2 ? { background: '#CD7F3215', borderColor: '#CD7F3266' }
-              : {}
-            }
-          >
-            <span
-              className="font-black tabular-nums text-white/60"
-              style={{ fontSize: i < 3 ? 40 : 32, minWidth: 52, textAlign: 'center' }}
-            >
-              {i + 1}
-            </span>
-            <span className="flex-1 font-black text-white truncate" style={{ fontSize: 40 }}>{p.displayName}</span>
-            <span className="text-white/40 font-bold" style={{ fontSize: 24 }}>{p.correctCount} correct</span>
-            <span className="font-black tabular-nums" style={{ fontSize: 52, color: theme.accentColor }}>
-              {p.score.toLocaleString()}
-            </span>
-            {p.streak >= 3 && (
-              <span className="flex items-center gap-1" style={{ color: '#F97316' }}>
-                <Flame size={28} />
-                <span className="font-black" style={{ fontSize: 28 }}>{p.streak}</span>
-              </span>
-            )}
-          </div>
-        ))}
-        {state.leaderboard.length === 0 && (
+        {state.leaderboard.length === 0 ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-white/30 font-bold" style={{ fontSize: 36 }}>
-              No players yet — scan the QR to join!
+            <div className="text-center" style={{ animation: 'tv-scale-in 0.4s ease both' }}>
+              <Users size={72} className="mx-auto text-white/15 mb-4" />
+              <div className="text-white/30 font-bold" style={{ fontSize: 38 }}>
+                No players yet
+              </div>
+              <div className="text-white/20 font-bold mt-2" style={{ fontSize: 24 }}>
+                Scan the QR code to join!
+              </div>
             </div>
           </div>
+        ) : (
+          state.leaderboard.slice(0, maxPlayers).map((p, i) => {
+            const isPodium = p.rank <= 3
+            return (
+              <div
+                key={p.id}
+                className="flex items-center rounded-2xl shrink-0"
+                style={{
+                  gap: 20,
+                  paddingLeft: isPodium ? 28 : 20,
+                  paddingRight: isPodium ? 28 : 20,
+                  paddingTop: isPodium ? 16 : 12,
+                  paddingBottom: isPodium ? 16 : 12,
+                  background:
+                    p.rank === 1
+                      ? 'rgba(245,158,11,0.13)'
+                      : p.rank === 2
+                      ? 'rgba(156,163,175,0.10)'
+                      : p.rank === 3
+                      ? 'rgba(205,127,50,0.10)'
+                      : 'rgba(255,255,255,0.04)',
+                  border: `2px solid ${
+                    p.rank === 1
+                      ? 'rgba(245,158,11,0.40)'
+                      : p.rank === 2
+                      ? 'rgba(156,163,175,0.28)'
+                      : p.rank === 3
+                      ? 'rgba(205,127,50,0.28)'
+                      : 'rgba(255,255,255,0.08)'
+                  }`,
+                  animation: `tv-fade-in-up 0.45s ease ${i * 75}ms both`,
+                }}
+              >
+                {/* Rank badge */}
+                <div
+                  className="shrink-0 flex items-center justify-center"
+                  style={{ minWidth: 52 }}
+                >
+                  <RankBadge rank={p.rank} />
+                </div>
+
+                {/* Name */}
+                <span
+                  className="flex-1 font-black text-white truncate"
+                  style={{ fontSize: isPodium ? 44 : 36 }}
+                >
+                  {p.displayName}
+                </span>
+
+                {/* Correct count */}
+                <span
+                  className="text-white/35 font-bold shrink-0"
+                  style={{ fontSize: 20 }}
+                >
+                  {p.correctCount} correct
+                </span>
+
+                {/* Streak */}
+                {p.streak >= 3 && (
+                  <span
+                    className="flex items-center gap-1.5 shrink-0"
+                    style={{ color: '#F97316' }}
+                  >
+                    <Zap size={isPodium ? 32 : 26} strokeWidth={2.5} />
+                    <span
+                      className="font-black"
+                      style={{ fontSize: isPodium ? 30 : 24 }}
+                    >
+                      {p.streak}
+                    </span>
+                  </span>
+                )}
+
+                {/* Score */}
+                <span
+                  className="font-black tabular-nums shrink-0"
+                  style={{
+                    fontSize: isPodium ? 54 : 42,
+                    color: theme.accentColor,
+                    minWidth: 160,
+                    textAlign: 'right',
+                  }}
+                >
+                  {p.score.toLocaleString()}
+                </span>
+              </div>
+            )
+          })
         )}
       </div>
 
-      {/* Bottom: join info */}
+      {/* Bottom: QR join */}
       {!isKiosk && (
-        <div className="flex items-center gap-6 shrink-0">
-          <QRCodeImg url={joinUrl} size={120} />
-          <div>
-            <div className="text-white font-bold" style={{ fontSize: 24 }}>Join at <span className="font-black">aitriviaarena.com/join</span></div>
-            <div className="text-white/50 font-bold" style={{ fontSize: 20 }}>Code: <span className="font-black tracking-widest" style={{ color: theme.accentColor }}>{state.gameCode}</span></div>
-          </div>
-          <div className="ml-auto text-white/30 font-bold" style={{ fontSize: 20 }}>
-            {state.playerCount} player{state.playerCount !== 1 ? 's' : ''} online
-          </div>
+        <div className="shrink-0">
+          <QRCodePanel url={joinUrl} gameCode={state.gameCode} accent={theme.accentColor} />
         </div>
       )}
     </div>
@@ -274,34 +527,56 @@ function QuestionScreen({
   theme,
   joinUrl,
   isKiosk,
+  displayPhase,
 }: {
   state: AlwaysOnState
-  theme: typeof THEMES[ThemeKey]
+  theme: (typeof THEMES)[ThemeKey]
   joinUrl: string
   isKiosk?: boolean
+  displayPhase: DisplayPhase
 }) {
   const { question } = state
+  const revealing = displayPhase === 'revealing'
 
   return (
     <div className="flex-1 flex flex-col" style={{ minHeight: 0 }}>
       {/* Header bar */}
       <div className="flex items-center justify-between px-10 py-5 shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-white font-black" style={{ fontSize: 28 }}>
-            <Target size={28} />
+        <div className="flex items-center gap-5">
+          <div
+            className="flex items-center gap-2.5 text-white font-black"
+            style={{ fontSize: 30 }}
+          >
+            <Target size={30} strokeWidth={2} />
             AI Trivia Arena
           </div>
-          <span className="text-white/30 font-bold" style={{ fontSize: 24 }}>
+          <span className="text-white/30 font-bold" style={{ fontSize: 26 }}>
             Q#{state.questionNumber}
           </span>
         </div>
+
         <div className="flex items-center gap-8">
-          <CountdownTimer
-            startedAt={state.questionStartedAt}
-            duration={state.timePerQuestion}
-            color={theme.timerColor}
-          />
-          <div className="text-white/50 font-bold text-right" style={{ fontSize: 22 }}>
+          {revealing ? (
+            <div
+              className="flex items-center gap-3 font-black"
+              style={{
+                fontSize: 38,
+                color: '#10B981',
+                animation: 'tv-times-up 1.8s ease-in-out infinite',
+              }}
+            >
+              <CheckCircle size={40} strokeWidth={2.5} />
+              Time&apos;s Up!
+            </div>
+          ) : (
+            <CountdownTimer
+              startedAt={state.questionStartedAt}
+              duration={state.timePerQuestion}
+              color={theme.timerColor}
+            />
+          )}
+
+          <div className="text-white/45 font-bold text-right" style={{ fontSize: 22 }}>
             <div>{state.playerCount} player{state.playerCount !== 1 ? 's' : ''}</div>
             <div>online</div>
           </div>
@@ -309,10 +584,16 @@ function QuestionScreen({
       </div>
 
       {/* Question text */}
-      <div className="px-10 flex-1 flex flex-col gap-6" style={{ minHeight: 0 }}>
+      <div className="px-10 flex-1 flex flex-col gap-5" style={{ minHeight: 0 }}>
         <div
-          className={cn('rounded-3xl px-10 py-8 text-white font-bold text-center shrink-0', theme.cardClass)}
-          style={{ fontSize: question && question.text.length > 100 ? 44 : 56, lineHeight: 1.25 }}
+          className={cn(
+            'rounded-3xl px-10 py-8 text-white font-bold text-center shrink-0',
+            theme.cardClass,
+          )}
+          style={{
+            fontSize: question && question.text.length > 100 ? 44 : 56,
+            lineHeight: 1.25,
+          }}
         >
           {question?.text ?? 'Loading question...'}
         </div>
@@ -321,37 +602,29 @@ function QuestionScreen({
         {question && (
           <div className="grid grid-cols-2 gap-5 flex-1 min-h-0">
             {question.answers.map((answer, i) => (
-              <div
+              <AnswerCard
                 key={i}
-                className="rounded-3xl flex items-center gap-5 px-8"
-                style={{
-                  background: theme.answerColors[i] + 'CC',
-                  border: `4px solid ${theme.answerColors[i]}`,
-                  minHeight: 100,
-                }}
-              >
-                <span className="font-black text-white shrink-0" style={{ fontSize: 52, minWidth: 56 }}>
-                  {theme.answerLabels[i]}
-                </span>
-                <span className="font-bold text-white" style={{ fontSize: answer.length > 40 ? 32 : 42, lineHeight: 1.2 }}>
-                  {answer}
-                </span>
-              </div>
+                answer={answer}
+                label={theme.answerLabels[i]}
+                color={theme.answerColors[i]}
+                phase={displayPhase}
+                isCorrect={answer === question.correctAnswer}
+                index={i}
+              />
             ))}
           </div>
         )}
       </div>
 
-      {/* Bottom bar: leaderboard strip + QR */}
+      {/* Bottom bar: QR + leaderboard strip */}
       {!isKiosk && (
-        <div className="flex items-center gap-6 px-10 py-4 border-t border-white/10 shrink-0">
-          <QRCodeImg url={joinUrl} size={100} />
-          <div className="shrink-0">
-            <div className="text-white font-bold" style={{ fontSize: 18 }}>aitriviaarena.com/join</div>
-            <div className="font-black tracking-widest" style={{ fontSize: 24, color: theme.accentColor }}>
-              {state.gameCode}
-            </div>
-          </div>
+        <div className="flex items-center gap-5 px-10 py-4 border-t border-white/10 shrink-0">
+          <QRCodePanel
+            url={joinUrl}
+            gameCode={state.gameCode}
+            accent={theme.accentColor}
+            compact
+          />
           <div className="flex-1 min-w-0">
             <LeaderboardStrip players={state.leaderboard} accent={theme.accentColor} />
           </div>
@@ -367,8 +640,11 @@ function TVPageContent() {
   const isKiosk = searchParams.get('kiosk') === 'true'
 
   const [gameState, setGameState] = useState<AlwaysOnState | null>(null)
+  const [displayPhase, setDisplayPhase] = useState<DisplayPhase>('question')
   const [error, setError] = useState<string | null>(null)
+
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const prevStatusRef = useRef<string>('')
 
   const poll = useCallback(async () => {
@@ -382,18 +658,35 @@ function TVPageContent() {
       const data = (await res.json()) as AlwaysOnState
       setGameState(data)
       setError(null)
+
+      // ── Display phase state machine ──────────────────────────────────────
+      if (data.status === 'showing_leaderboard' && prevStatusRef.current === 'active') {
+        // Just transitioned → show answer reveal on the question screen first
+        setDisplayPhase('revealing')
+        if (revealTimerRef.current) clearTimeout(revealTimerRef.current)
+        revealTimerRef.current = setTimeout(() => {
+          setDisplayPhase('leaderboard')
+        }, 2600)
+      } else if (data.status === 'active') {
+        // New question started → reset to question phase
+        if (revealTimerRef.current) clearTimeout(revealTimerRef.current)
+        setDisplayPhase('question')
+      }
+      // If still showing_leaderboard and we're already in leaderboard/revealing, don't reset
+
       prevStatusRef.current = data.status
     } catch {
-      // Network error — retry on next tick
+      // Network hiccup — retry on next interval
     }
   }, [])
 
-  // Auto-start immediately on mount — no tap required
+  // Auto-start on mount — no tap required
   useEffect(() => {
     poll()
     pollRef.current = setInterval(poll, 1500)
     return () => {
       if (pollRef.current) clearInterval(pollRef.current)
+      if (revealTimerRef.current) clearTimeout(revealTimerRef.current)
     }
   }, [poll])
 
@@ -402,11 +695,24 @@ function TVPageContent() {
   const theme = THEMES[themeKey] ?? THEMES.classic
   const joinUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://aitriviaarena.com'}/join`
 
+  // Milestone = every 5th question (Q5, Q10, Q15…) gets the full podium board
+  const isMilestone =
+    gs !== null && gs.questionNumber > 0 && gs.questionNumber % 5 === 0
+
+  // Leaderboard countdown
+  const lbCountdown =
+    gs?.status === 'showing_leaderboard' && gs.leaderboardEndsAt
+      ? Math.max(0, Math.ceil((new Date(gs.leaderboardEndsAt).getTime() - Date.now()) / 1000))
+      : 0
+
   // ── Loading ─────────────────────────────────────────────────────────────────
   if (!gs && !error) {
     return (
       <div className={cn('w-screen h-screen flex items-center justify-center overflow-hidden', theme.bgClass)}>
-        <div className="flex items-center gap-3 text-white/50 font-bold" style={{ fontSize: 36 }}>
+        <div
+          className="flex items-center gap-3 text-white/50 font-bold"
+          style={{ fontSize: 36 }}
+        >
           <Loader2 size={36} className="animate-spin" />
           Loading game...
         </div>
@@ -417,12 +723,21 @@ function TVPageContent() {
   // ── Error state ─────────────────────────────────────────────────────────────
   if (error) {
     return (
-      <div className={cn('w-screen h-screen flex flex-col items-center justify-center overflow-hidden', theme.bgClass)}>
+      <div
+        className={cn(
+          'w-screen h-screen flex flex-col items-center justify-center overflow-hidden',
+          theme.bgClass,
+        )}
+      >
         <div className="text-center space-y-4">
-          <AlertTriangle size={64} className="mx-auto text-yellow-400" />
-          <div className="text-white font-black" style={{ fontSize: 40 }}>Setup required</div>
-          <div className="text-white/60 font-bold" style={{ fontSize: 24 }}>{error}</div>
-          <div className="text-white/40" style={{ fontSize: 20 }}>
+          <AlertTriangle size={72} className="mx-auto text-yellow-400" />
+          <div className="text-white font-black" style={{ fontSize: 42 }}>
+            Setup required
+          </div>
+          <div className="text-white/55 font-bold" style={{ fontSize: 26 }}>
+            {error}
+          </div>
+          <div className="text-white/35" style={{ fontSize: 20 }}>
             Visit <strong>/admin → Seed Questions</strong> to add questions to the pool
           </div>
         </div>
@@ -431,21 +746,32 @@ function TVPageContent() {
   }
 
   // ── Game ─────────────────────────────────────────────────────────────────────
-  const lbCountdown = gs!.status === 'showing_leaderboard'
-    ? Math.max(0, Math.ceil((new Date(gs!.leaderboardEndsAt ?? Date.now()).getTime() - Date.now()) / 1000))
-    : 0
-
   return (
     <div
       className={cn('w-screen h-screen flex flex-col overflow-hidden select-none', theme.bgClass)}
       style={{ fontFamily: 'var(--font-geist-sans), system-ui, sans-serif' }}
     >
-      {gs!.status === 'active' && (
-        <QuestionScreen state={gs!} theme={theme} joinUrl={joinUrl} isKiosk={isKiosk} />
+      {/* Question screen — shown during 'question' and 'revealing' phases */}
+      {(displayPhase === 'question' || displayPhase === 'revealing') && (
+        <QuestionScreen
+          state={gs!}
+          theme={theme}
+          joinUrl={joinUrl}
+          isKiosk={isKiosk}
+          displayPhase={displayPhase}
+        />
       )}
 
-      {gs!.status === 'showing_leaderboard' && (
-        <LeaderboardScreen state={gs!} theme={theme} joinUrl={joinUrl} countdown={lbCountdown} isKiosk={isKiosk} />
+      {/* Leaderboard — shown after reveal animation completes */}
+      {displayPhase === 'leaderboard' && (
+        <LeaderboardScreen
+          state={gs!}
+          theme={theme}
+          joinUrl={joinUrl}
+          countdown={lbCountdown}
+          isKiosk={isKiosk}
+          isMilestone={isMilestone}
+        />
       )}
     </div>
   )
