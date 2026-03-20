@@ -53,7 +53,7 @@ export function CheckoutButton({
   }
 
   const baseClass =
-    'w-full inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+    'w-full inline-flex items-center justify-center rounded-md text-sm font-medium min-h-[44px] px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
 
   const variantClass =
     variant === 'primary'

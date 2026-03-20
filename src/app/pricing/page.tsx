@@ -171,7 +171,7 @@ function FreeCta() {
   return (
     <Link
       href="/join"
-      className="w-full inline-flex items-center justify-center rounded-md border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-sm font-medium h-10 px-4 transition-colors"
+      className="w-full inline-flex items-center justify-center rounded-md border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-sm font-medium min-h-[44px] px-4 transition-colors"
     >
       Get Started Free
     </Link>
