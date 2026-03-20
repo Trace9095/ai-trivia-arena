@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "AI Trivia Arena",
+    "slug": "ai-trivia-arena",
+    "version": "1.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "aitriviaarena",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0A14"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "ai.epicai.triviarena",
+      "buildNumber": "1",
+      "appleTeamId": "MPH83385EQ",
+      "infoPlist": {
+        "NSCameraUsageDescription": "AI Trivia Arena uses the camera to scan game QR codes."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0A14"
+      },
+      "package": "ai.epicai.triviarena",
+      "permissions": [
+        "CAMERA",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "AI Trivia Arena uses the camera to scan game QR codes."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1aa48f03-c26d-4768-bb5d-a0ad807af683"
+      }
+    },
+    "owner": "tracehilde"
+  }
+}
