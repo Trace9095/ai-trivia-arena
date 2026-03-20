@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
-import { Trophy, Crown, Flame } from 'lucide-react'
+import { Trophy, Crown, Flame, Medal } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Leaderboard',
   description: 'See the top trivia players competing on AI Trivia Arena. All-time champions and weekly leaders.',
 }
+
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -33,7 +34,6 @@ async function getAllTimeLeaderboard() {
 async function getWeeklyLeaderboard() {
   const db = getDb()
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  // Players with most points in live games this week
   return db
     .select({
       id: users.id,
@@ -48,16 +48,43 @@ async function getWeeklyLeaderboard() {
     .limit(50)
 }
 
-
 function getDisplayName(user: { name: string | null; email: string }) {
   return user.name ?? user.email.split('@')[0]
 }
 
+// Rank badge — top 3 get icons + coloured rings, rest get plain numbers
 function RankBadge({ rank }: { rank: number }) {
-  if (rank === 1) return <div className="w-9 h-9 rounded-full bg-yellow-500/20 border border-yellow-500/50 flex items-center justify-center"><Crown className="w-5 h-5 text-yellow-400" /></div>
-  if (rank === 2) return <div className="w-9 h-9 rounded-full bg-gray-500/20 border border-gray-500/50 flex items-center justify-center"><span className="text-sm font-bold text-gray-300">2</span></div>
-  if (rank === 3) return <div className="w-9 h-9 rounded-full bg-amber-700/20 border border-amber-700/50 flex items-center justify-center"><span className="text-sm font-bold text-amber-600">3</span></div>
-  return <div className="w-9 h-9 flex items-center justify-center"><span className="font-mono text-muted-foreground text-sm">{rank}</span></div>
+  if (rank === 1)
+    return (
+      <div className="w-10 h-10 rounded-full bg-yellow-500/15 border border-yellow-500/40 flex items-center justify-center shrink-0">
+        <Crown className="w-5 h-5 text-yellow-400" />
+      </div>
+    )
+  if (rank === 2)
+    return (
+      <div className="w-10 h-10 rounded-full bg-zinc-500/15 border border-zinc-500/40 flex items-center justify-center shrink-0">
+        <Medal className="w-5 h-5 text-zinc-300" />
+      </div>
+    )
+  if (rank === 3)
+    return (
+      <div className="w-10 h-10 rounded-full bg-amber-700/15 border border-amber-700/40 flex items-center justify-center shrink-0">
+        <Medal className="w-5 h-5 text-amber-600" />
+      </div>
+    )
+  return (
+    <div className="w-10 h-10 flex items-center justify-center shrink-0">
+      <span className="font-mono text-zinc-500 text-sm font-bold">{rank}</span>
+    </div>
+  )
+}
+
+// Avatar colour based on rank
+function getAvatarStyle(rank: number): string {
+  if (rank === 1) return 'bg-yellow-950/60 text-yellow-400 border-yellow-700/40'
+  if (rank === 2) return 'bg-zinc-800 text-zinc-300 border-zinc-600/40'
+  if (rank === 3) return 'bg-amber-950/60 text-amber-600 border-amber-700/40'
+  return 'bg-blue-950/60 text-blue-400 border-blue-700/20'
 }
 
 function LeaderboardRow({
@@ -76,29 +103,37 @@ function LeaderboardRow({
   const isTop3 = rank <= 3
   return (
     <div
-      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-        isTop3 ? 'bg-yellow-950/10 border border-yellow-900/30' : 'hover:bg-muted/20'
+      className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${
+        rank === 1
+          ? 'bg-yellow-950/20 border border-yellow-900/30'
+          : rank === 2
+          ? 'bg-zinc-900/40 border border-zinc-700/20'
+          : rank === 3
+          ? 'bg-amber-950/15 border border-amber-900/20'
+          : 'border border-transparent hover:bg-white/3 hover:border-white/6'
       }`}
     >
       <RankBadge rank={rank} />
       <Avatar className="w-9 h-9 shrink-0">
-        <AvatarFallback className="bg-blue-950 text-blue-400 font-bold text-sm">
+        <AvatarFallback className={`font-bold text-sm border ${getAvatarStyle(rank)}`}>
           {name[0]?.toUpperCase() ?? '?'}
         </AvatarFallback>
       </Avatar>
       <div className="flex-1 min-w-0">
-        <p className="font-semibold truncate text-sm">{name}</p>
-        {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
+        <p className={`font-semibold truncate text-sm ${isTop3 ? 'text-white' : 'text-zinc-300'}`}>
+          {name}
+        </p>
+        {sub && <p className="text-xs text-zinc-600">{sub}</p>}
       </div>
       {streak != null && streak >= 3 && (
-        <div className="flex items-center gap-1 text-orange-400 text-xs font-bold">
+        <div className="flex items-center gap-1 text-orange-400 text-xs font-bold bg-orange-950/50 border border-orange-800/40 rounded-full px-2 py-0.5">
           <Flame className="w-3 h-3" />
           {streak}
         </div>
       )}
       <div className="text-right shrink-0">
         <p className="font-mono font-bold text-blue-400 text-sm">{score.toLocaleString()}</p>
-        <p className="text-xs text-muted-foreground">pts</p>
+        <p className="text-xs text-zinc-600">pts</p>
       </div>
     </div>
   )
@@ -106,9 +141,9 @@ function LeaderboardRow({
 
 function EmptyState() {
   return (
-    <Card className="p-10 text-center">
-      <Trophy className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-      <p className="text-muted-foreground text-sm">No data yet. Start playing!</p>
+    <Card className="p-12 text-center border-white/8 bg-card/50">
+      <Trophy className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
+      <p className="text-zinc-500 text-sm font-medium">No data yet — be the first to play!</p>
     </Card>
   )
 }
@@ -119,26 +154,43 @@ export default async function LeaderboardPage() {
     getWeeklyLeaderboard().catch(() => []),
   ])
 
+  const weeklyFiltered = weekly.filter((u) => u.weekScore > 0)
+
   return (
-    <div className="max-w-xl mx-auto px-4 py-8">
-      <div className="flex items-center gap-3 mb-8">
-        <Trophy className="w-8 h-8 text-yellow-400" />
+    <div className="max-w-2xl mx-auto px-4 py-10">
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-8">
+        <div className="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center shrink-0">
+          <Trophy className="w-6 h-6 text-yellow-400" />
+        </div>
         <div>
-          <h1 className="text-3xl font-bold">Leaderboard</h1>
-          <p className="text-muted-foreground text-sm">Top trivia players</p>
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">Leaderboard</h1>
+          <p className="text-zinc-500 text-sm mt-0.5">Top trivia players worldwide</p>
         </div>
       </div>
 
       <Tabs defaultValue="week">
-        <TabsList className="w-full mb-6">
-          <TabsTrigger value="week" className="flex-1">This Week</TabsTrigger>
-          <TabsTrigger value="alltime" className="flex-1">All Time</TabsTrigger>
+        <TabsList className="w-full mb-6 bg-card border border-white/8 p-1">
+          <TabsTrigger
+            value="week"
+            className="flex-1 data-[state=active]:bg-white/10 data-[state=active]:text-white text-zinc-500"
+          >
+            This Week
+          </TabsTrigger>
+          <TabsTrigger
+            value="alltime"
+            className="flex-1 data-[state=active]:bg-white/10 data-[state=active]:text-white text-zinc-500"
+          >
+            All Time
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="week">
-          {weekly.filter((u) => u.weekScore > 0).length === 0 ? <EmptyState /> : (
-            <div className="space-y-1">
-              {weekly.filter((u) => u.weekScore > 0).map((u, i) => (
+          {weeklyFiltered.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <div className="space-y-1.5">
+              {weeklyFiltered.map((u, i) => (
                 <LeaderboardRow
                   key={u.id}
                   rank={i + 1}
@@ -152,8 +204,10 @@ export default async function LeaderboardPage() {
         </TabsContent>
 
         <TabsContent value="alltime">
-          {allTime.length === 0 ? <EmptyState /> : (
-            <div className="space-y-1">
+          {allTime.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <div className="space-y-1.5">
               {allTime.map((u, i) => (
                 <LeaderboardRow
                   key={u.id}

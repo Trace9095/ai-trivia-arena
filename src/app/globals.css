@@ -83,37 +83,40 @@
 }
 
 .dark {
-  --background: oklch(0.13 0.01 240);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* Base palette — true #0D1117 dark matching the portfolio standard */
+  --background: oklch(0.10 0.008 240);
+  --foreground: oklch(0.96 0 0);
+  /* Cards sit one stop lighter than background */
+  --card: oklch(0.155 0.008 250);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.155 0.008 250);
+  --popover-foreground: oklch(0.96 0 0);
+  /* Brand purple as primary — used by shadcn Button default */
+  --primary: oklch(0.60 0.22 293);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.22 0.008 250);
+  --secondary-foreground: oklch(0.96 0 0);
+  --muted: oklch(0.20 0.008 250);
+  --muted-foreground: oklch(0.60 0 0);
+  --accent: oklch(0.22 0.008 250);
+  --accent-foreground: oklch(0.96 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.60 0.22 293 / 50%);
   --chart-1: oklch(0.809 0.105 251.813);
   --chart-2: oklch(0.623 0.214 259.815);
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar: oklch(0.155 0.008 250);
+  --sidebar-foreground: oklch(0.96 0 0);
+  --sidebar-primary: oklch(0.60 0.22 293);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-accent: oklch(0.22 0.008 250);
+  --sidebar-accent-foreground: oklch(0.96 0 0);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.60 0.22 293 / 50%);
 }
 
 @layer base {
@@ -156,6 +159,63 @@
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.6; }
 }
+
+/* ─── Brand Utility Classes ──────────────────────────────────────────────────── */
+
+/* Subtle grid texture overlay for hero sections */
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Glass card effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Purple glow on focus / hover for interactive elements */
+.ring-brand {
+  box-shadow: 0 0 0 2px oklch(0.60 0.22 293 / 40%);
+}
+
+/* Smooth entrance animations */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Staggered children delay helpers */
+.stagger-1 { animation-delay: 80ms; }
+.stagger-2 { animation-delay: 160ms; }
+.stagger-3 { animation-delay: 240ms; }
+.stagger-4 { animation-delay: 320ms; }
 
 /* Fix mobile viewport height — prevents navbar "floating island" bug on iOS/Android */
 @supports (height: 100dvh) {
