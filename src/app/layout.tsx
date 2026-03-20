@@ -25,14 +25,14 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'AI Trivia Arena',
     locale: 'en_US',
-    images: ['/opengraph-image'],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'AI Trivia Arena — Questions That Never Repeat' }],
     url: '/',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'AI Trivia Arena — Questions That Never Repeat',
     description: 'AI-powered trivia that never repeats. Compete daily, climb the global leaderboard.',
-    images: ['/opengraph-image'],
+    images: [{ url: '/twitter-card.png', width: 1200, height: 600, alt: 'AI Trivia Arena' }],
   },
   robots: {
     index: true,
@@ -42,6 +42,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  manifest: '/site.webmanifest',
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#7C3AED' },
+    { media: '(prefers-color-scheme: light)', color: '#7C3AED' },
+  ],
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

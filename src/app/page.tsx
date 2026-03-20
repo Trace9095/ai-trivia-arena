@@ -217,19 +217,19 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="max-w-6xl mx-auto px-4 py-20 text-center">
-        <div className="bg-gradient-to-r from-blue-950 to-purple-950 border border-blue-800 rounded-2xl p-12">
+        <div className="bg-gradient-to-r from-blue-950 to-purple-950 border border-blue-800 rounded-2xl p-8 sm:p-12">
           <h2 className="text-4xl font-bold mb-4">Ready to Test Your Knowledge?</h2>
           <p className="text-muted-foreground mb-8 text-lg">
             Join the daily challenge — new questions every day, powered by AI.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/auth/login">
-              <Button size="lg" className="min-h-[52px] px-10 bg-blue-600 hover:bg-blue-700 text-lg font-bold w-full sm:w-auto">
+            <Link href="/auth/login" className="w-full sm:w-auto">
+              <Button size="lg" className="min-h-[52px] px-10 bg-blue-600 hover:bg-blue-700 text-lg font-bold w-full">
                 Play Free — No Credit Card Required
               </Button>
             </Link>
-            <Link href="/tv">
-              <Button size="lg" variant="outline" className="min-h-[52px] px-10 text-lg border-purple-700 text-purple-400 hover:bg-purple-950/40 w-full sm:w-auto">
+            <Link href="/tv" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="min-h-[52px] px-10 text-lg border-purple-700 text-purple-400 hover:bg-purple-950/40 w-full">
                 <Tv className="w-5 h-5 mr-2" />
                 Host Trivia Night
               </Button>
