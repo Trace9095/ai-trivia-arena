@@ -103,7 +103,7 @@ function LeaderboardRow({
   const isTop3 = rank <= 3
   return (
     <div
-      className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${
+      className={`flex items-center gap-3 px-3 py-3.5 rounded-xl transition-all min-h-[52px] ${
         rank === 1
           ? 'bg-yellow-950/20 border border-yellow-900/30'
           : rank === 2
@@ -132,7 +132,7 @@ function LeaderboardRow({
         </div>
       )}
       <div className="text-right shrink-0">
-        <p className="font-mono font-bold text-blue-400 text-sm">{score.toLocaleString()}</p>
+        <p className="font-mono font-black text-blue-400 text-base tabular-nums">{score.toLocaleString()}</p>
         <p className="text-xs text-zinc-600">pts</p>
       </div>
     </div>

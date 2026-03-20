@@ -1,7 +1,16 @@
 import type { Metadata } from 'next'
 import { Card } from '@/components/ui/card'
-import { Settings } from 'lucide-react'
+import {
+  Settings, Target, FlaskConical, Scroll, Globe, Clapperboard,
+  Trophy, UtensilsCrossed, Laptop, Film, Music, Mountain,
+  type LucideIcon,
+} from 'lucide-react'
 import { CATEGORIES } from '@/lib/utils'
+
+const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
+  Target, FlaskConical, Scroll, Globe, Clapperboard,
+  Trophy, UtensilsCrossed, Laptop, Film, Music, Mountain,
+}
 
 export const metadata: Metadata = {
   title: 'Settings — Admin',
@@ -117,7 +126,7 @@ export default function AdminSettingsPage() {
               className="flex items-center justify-between p-3 rounded-md border border-border"
             >
               <div className="flex items-center gap-2">
-                <span className="text-xl">{cat.icon}</span>
+                {(() => { const CatIcon = CATEGORY_ICON_MAP[cat.icon] ?? Target; return <CatIcon className="w-5 h-5 text-muted-foreground shrink-0" /> })()}
                 <div>
                   <div className="text-sm font-medium">{cat.name}</div>
                   <div className="text-xs text-muted-foreground">{cat.description}</div>

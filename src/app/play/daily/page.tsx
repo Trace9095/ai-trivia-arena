@@ -65,12 +65,15 @@ export default function DailyChallengePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-        <div className="p-4 rounded-2xl bg-blue-950 border border-blue-800">
-          <Brain className="w-10 h-10 text-blue-400 animate-pulse" />
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-5 px-4">
+        <div className="p-5 rounded-2xl bg-violet-950/50 border border-violet-700/40 shadow-xl shadow-violet-500/10">
+          <Brain className="w-12 h-12 text-violet-400 animate-pulse" />
         </div>
-        <p className="text-muted-foreground">Loading today&apos;s challenge...</p>
-        <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
+        <div className="text-center space-y-1.5">
+          <p className="text-white font-semibold text-lg">Loading today&apos;s challenge...</p>
+          <p className="text-zinc-500 text-sm">Fresh questions powered by Claude AI</p>
+        </div>
+        <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
       </div>
     )
   }

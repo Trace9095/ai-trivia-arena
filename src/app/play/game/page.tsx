@@ -97,21 +97,24 @@ function GameContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-        <div className="p-4 rounded-2xl bg-blue-950 border border-blue-800">
-          <Brain className="w-10 h-10 text-blue-400 animate-pulse" />
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-5 px-4">
+        <div className="p-5 rounded-2xl bg-violet-950/50 border border-violet-700/40 shadow-xl shadow-violet-500/10">
+          <Brain className="w-12 h-12 text-violet-400 animate-pulse" />
         </div>
-        <p className="text-muted-foreground">Claude is generating your questions...</p>
-        <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
+        <div className="text-center space-y-1.5">
+          <p className="text-white font-semibold text-lg">Generating your questions...</p>
+          <p className="text-zinc-500 text-sm">Claude AI is crafting unique trivia just for you</p>
+        </div>
+        <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="max-w-md mx-auto px-4 py-16 text-center">
-        <p className="text-red-400 mb-4">{error}</p>
-        <Button onClick={() => router.back()}>Go Back</Button>
+      <div className="max-w-md mx-auto px-4 py-16 text-center space-y-4">
+        <p className="text-red-400 font-semibold">{error}</p>
+        <Button onClick={() => router.back()} className="min-h-[52px] px-8">Go Back</Button>
       </div>
     )
   }

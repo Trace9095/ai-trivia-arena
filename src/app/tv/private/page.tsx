@@ -183,7 +183,7 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
                     key={opt.value}
                     onClick={() => setConfig((c) => ({ ...c, categoryMode: opt.value }))}
                     className={cn(
-                      'w-full text-left px-4 py-3 rounded-xl border-2 text-white font-medium transition-all',
+                      'w-full text-left min-h-[44px] px-4 py-3 rounded-xl border-2 text-white font-medium transition-all',
                       config.categoryMode === opt.value ? 'border-white bg-white/15' : 'border-white/20 hover:border-white/40'
                     )}
                   >
@@ -201,7 +201,7 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
                   <select
                     value={config.singleCategory}
                     onChange={(e) => setConfig((c) => ({ ...c, singleCategory: e.target.value }))}
-                    className="w-full bg-white/10 border border-white/30 text-white rounded-xl px-4 py-3 text-base"
+                    className="w-full min-h-[44px] bg-white/10 border border-white/30 text-white rounded-xl px-4 py-3 text-base"
                   >
                     {CATEGORIES.map((cat) => (
                       <option key={cat.id} value={cat.id} className="bg-gray-900">
@@ -221,7 +221,7 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
                       key={d}
                       onClick={() => setConfig((c) => ({ ...c, difficulty: d }))}
                       className={cn(
-                        'flex-1 py-3 rounded-xl border-2 text-white font-bold capitalize transition-all',
+                        'flex-1 min-h-[44px] py-3 rounded-xl border-2 text-white font-bold capitalize transition-all',
                         config.difficulty === d ? 'border-white bg-white/20' : 'border-white/20 hover:border-white/40'
                       )}
                     >
@@ -243,7 +243,7 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
                     key={n}
                     onClick={() => setConfig((c) => ({ ...c, roundCount: n }))}
                     className={cn(
-                      'px-4 py-2 rounded-xl border-2 text-white font-bold transition-all',
+                      'min-h-[44px] px-4 py-2 rounded-xl border-2 text-white font-bold transition-all',
                       config.roundCount === n ? 'border-white bg-white/20' : 'border-white/20'
                     )}
                   >
@@ -260,7 +260,7 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
                     key={n}
                     onClick={() => setConfig((c) => ({ ...c, questionsPerRound: n }))}
                     className={cn(
-                      'px-4 py-2 rounded-xl border-2 text-white font-bold transition-all',
+                      'min-h-[44px] px-4 py-2 rounded-xl border-2 text-white font-bold transition-all',
                       config.questionsPerRound === n ? 'border-white bg-white/20' : 'border-white/20'
                     )}
                   >
@@ -277,7 +277,7 @@ function SetupScreen({ onStart }: { onStart: (code: string, config: SetupConfig)
                     key={n}
                     onClick={() => setConfig((c) => ({ ...c, timePerQuestion: n }))}
                     className={cn(
-                      'px-4 py-2 rounded-xl border-2 text-white font-bold transition-all',
+                      'min-h-[44px] px-4 py-2 rounded-xl border-2 text-white font-bold transition-all',
                       config.timePerQuestion === n ? 'border-white bg-white/20' : 'border-white/20'
                     )}
                   >

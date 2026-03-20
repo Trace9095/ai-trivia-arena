@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100 py-16 px-4">
+    <main className="min-h-screen bg-background text-foreground py-16 px-4">
       <div className="max-w-5xl mx-auto space-y-20">
 
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
@@ -38,7 +38,7 @@ export default function AboutPage() {
 
         {/* ── Mission ──────────────────────────────────────────────────────── */}
         <section className="space-y-4 max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-zinc-100">Our Mission</h2>
+          <h2 className="text-2xl font-bold text-white">Our Mission</h2>
           <p className="text-zinc-400 text-lg leading-relaxed">
             We believe trivia should feel alive. AI Trivia Arena delivers AI-powered trivia that
             challenges you every day, never repeats a question, and adapts to your knowledge level
@@ -49,14 +49,14 @@ export default function AboutPage() {
 
         {/* ── How It Works ─────────────────────────────────────────────────── */}
         <section className="space-y-8">
-          <h2 className="text-2xl font-bold text-center text-zinc-100">How It Works</h2>
+          <h2 className="text-2xl font-bold text-center text-white">How It Works</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <Card className="bg-zinc-900 border-zinc-800">
+            <Card className="bg-card border-white/8">
               <CardContent className="pt-6 flex flex-col items-center text-center space-y-3">
                 <div className="w-12 h-12 rounded-full bg-violet-900/50 flex items-center justify-center">
                   <Brain className="w-6 h-6 text-violet-400" />
                 </div>
-                <h3 className="font-semibold text-zinc-100 text-lg">Play Daily</h3>
+                <h3 className="font-semibold text-white text-lg">Play Daily</h3>
                 <p className="text-zinc-400 text-sm leading-relaxed">
                   Choose a category and let Claude AI build your quiz on the spot. Every session is
                   unique — questions are generated fresh, not pulled from a recycled database.
@@ -64,12 +64,12 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-zinc-900 border-zinc-800">
+            <Card className="bg-card border-white/8">
               <CardContent className="pt-6 flex flex-col items-center text-center space-y-3">
                 <div className="w-12 h-12 rounded-full bg-fuchsia-900/50 flex items-center justify-center">
                   <Trophy className="w-6 h-6 text-fuchsia-400" />
                 </div>
-                <h3 className="font-semibold text-zinc-100 text-lg">Climb the Leaderboard</h3>
+                <h3 className="font-semibold text-white text-lg">Climb the Leaderboard</h3>
                 <p className="text-zinc-400 text-sm leading-relaxed">
                   Earn points for speed and accuracy. Your score stacks against players worldwide on
                   the global leaderboard — updated in real time after every completed round.
@@ -77,12 +77,12 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-zinc-900 border-zinc-800">
+            <Card className="bg-card border-white/8">
               <CardContent className="pt-6 flex flex-col items-center text-center space-y-3">
                 <div className="w-12 h-12 rounded-full bg-blue-900/50 flex items-center justify-center">
                   <Tv className="w-6 h-6 text-blue-400" />
                 </div>
-                <h3 className="font-semibold text-zinc-100 text-lg">Compete on TV</h3>
+                <h3 className="font-semibold text-white text-lg">Compete on TV</h3>
                 <p className="text-zinc-400 text-sm leading-relaxed">
                   Cast the live TV mode to any screen. Run a real trivia night at your venue with
                   a countdown timer, live scores, and a crowd-ready display — no extra hardware needed.
@@ -100,7 +100,7 @@ export default function AboutPage() {
             { icon: Tv, label: 'Real-time TV mode', color: 'text-blue-400' },
             { icon: Users, label: 'Global leaderboard', color: 'text-emerald-400' },
           ].map(({ icon: Icon, label, color }) => (
-            <Card key={label} className="bg-zinc-900 border-zinc-800">
+            <Card key={label} className="bg-card border-white/8">
               <CardContent className="pt-6 flex flex-col items-center text-center space-y-2">
                 <Icon className={`w-7 h-7 ${color}`} />
                 <p className="text-zinc-300 text-sm font-medium leading-snug">{label}</p>
@@ -111,8 +111,8 @@ export default function AboutPage() {
 
         {/* ── Technology ───────────────────────────────────────────────────── */}
         <section className="max-w-3xl mx-auto space-y-4">
-          <h2 className="text-2xl font-bold text-zinc-100">The Technology</h2>
-          <Card className="bg-zinc-900 border-zinc-800">
+          <h2 className="text-2xl font-bold text-white">The Technology</h2>
+          <Card className="bg-card border-white/8">
             <CardContent className="pt-6 space-y-4 text-zinc-400 text-base leading-relaxed">
               <p>
                 AI Trivia Arena is built on{' '}
@@ -137,7 +137,7 @@ export default function AboutPage() {
 
         {/* ── CTA ──────────────────────────────────────────────────────────── */}
         <section className="text-center space-y-4 pb-4">
-          <h2 className="text-2xl font-bold text-zinc-100">Ready to Play?</h2>
+          <h2 className="text-2xl font-bold text-white">Ready to Play?</h2>
           <p className="text-zinc-400">
             Jump in free — no credit card required. Your first round is one click away.
           </p>

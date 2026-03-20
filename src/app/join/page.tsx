@@ -102,7 +102,7 @@ function SaveScoreModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-4 bg-black/85">
       <div className="w-full max-w-sm bg-[#12121a] border border-white/15 rounded-3xl p-6 space-y-5 mb-4">
         {/* Header */}
         <div className="flex items-start justify-between">
@@ -350,8 +350,11 @@ function JoinContent() {
   // ── LOADING ───────────────────────────────────────────────────────────────
   if (phase === 'loading') {
     return (
-      <div className="min-h-screen bg-[#0A0A14] flex items-center justify-center">
-        <div className="text-white/40 font-bold text-xl animate-pulse">Loading game...</div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 text-violet-400 animate-spin" />
+          <div className="text-white/50 font-bold text-lg">Loading game...</div>
+        </div>
       </div>
     )
   }
@@ -359,7 +362,7 @@ function JoinContent() {
   // ── JOIN ──────────────────────────────────────────────────────────────────
   if (phase === 'join') {
     return (
-      <div className="min-h-screen bg-[#0A0A14] flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-3">
@@ -429,7 +432,7 @@ function JoinContent() {
   const st = state
 
   return (
-    <div className="min-h-screen bg-[#0A0A14] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Save score modal */}
       {showSaveModal && st && (
         <SaveScoreModal
@@ -446,7 +449,7 @@ function JoinContent() {
           Code: <span className="text-white font-black tracking-widest">{gameCode}</span>
         </div>
         <div className="flex gap-3 items-center">
-          {st && <span className="text-white font-black text-lg">{st.myScore.toLocaleString()} pts</span>}
+          {st && <span className="text-white font-mono font-black text-lg tabular-nums">{st.myScore.toLocaleString()} pts</span>}
           {(st?.myStreak ?? 0) >= 3 && (
             <span className="text-orange-400 font-bold text-sm flex items-center gap-0.5">
               <Flame className="w-4 h-4" />{st!.myStreak}
@@ -463,9 +466,13 @@ function JoinContent() {
         {/* WAITING */}
         {(!st || st.status === 'waiting') && (
           <div className="text-center space-y-6">
-            <Loader2 className="w-16 h-16 text-blue-400 animate-spin" />
-            <h2 className="text-2xl font-black text-white">Getting ready...</h2>
-            <p className="text-white/50">First question is coming up!</p>
+            <div className="w-20 h-20 mx-auto rounded-full bg-violet-950/50 border border-violet-700/40 flex items-center justify-center">
+              <Loader2 className="w-10 h-10 text-violet-400 animate-spin" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-black text-white">Getting ready...</h2>
+              <p className="text-white/50">First question is coming up!</p>
+            </div>
           </div>
         )}
 
@@ -646,8 +653,8 @@ function JoinContent() {
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
               <div className="text-white/60 text-sm font-bold">Your rank</div>
-              <div className="text-5xl font-black text-blue-400">#{st.myRank}</div>
-              <div className="text-white font-bold text-2xl">{st.myScore.toLocaleString()} pts</div>
+              <div className="text-5xl font-mono font-black text-blue-400 tabular-nums">#{st.myRank}</div>
+              <div className="text-white font-mono font-black text-2xl tabular-nums">{st.myScore.toLocaleString()} pts</div>
             </div>
             {st.myLastAnswer && !st.myLastAnswer.isCorrect && st.myLastAnswer.correctAnswer && (
               <div className="text-white/50 text-sm">
@@ -675,15 +682,15 @@ function JoinContent() {
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <div className="text-blue-400 font-black text-3xl">{st.myScore.toLocaleString()}</div>
+                  <div className="text-blue-400 font-mono font-black text-3xl tabular-nums">{st.myScore.toLocaleString()}</div>
                   <div className="text-white/50 text-xs mt-1">Points</div>
                 </div>
                 <div>
-                  <div className="text-green-400 font-black text-3xl">{st.myCorrectCount}</div>
+                  <div className="text-green-400 font-mono font-black text-3xl tabular-nums">{st.myCorrectCount}</div>
                   <div className="text-white/50 text-xs mt-1">Correct</div>
                 </div>
                 <div>
-                  <div className="text-orange-400 font-black text-3xl flex items-center justify-center gap-1">
+                  <div className="text-orange-400 font-mono font-black text-3xl tabular-nums flex items-center justify-center gap-1">
                     {st.myStreak}<Flame className="w-7 h-7" />
                   </div>
                   <div className="text-white/50 text-xs mt-1">Best Streak</div>
@@ -712,7 +719,7 @@ function JoinContent() {
 export default function JoinPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#0A0A14] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-white/50 font-bold">Loading...</div>
       </div>
     }>

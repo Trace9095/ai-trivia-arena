@@ -116,17 +116,17 @@ export function QuestionCard({
     const c = ANSWER_COLORS[i % 4]!
     if (!result) {
       return cn(
-        'min-h-[62px] w-full px-4 py-3 rounded-xl border text-left font-medium transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50',
+        'min-h-[64px] w-full px-4 py-4 rounded-xl border text-left font-medium transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50',
         selectedAnswer === null ? c.idle : cn(c.idle, 'cursor-not-allowed'),
       )
     }
     if (answer === question.correctAnswer) {
-      return cn('min-h-[62px] w-full px-4 py-3 rounded-xl border text-left font-medium transition-all', c.correct)
+      return cn('min-h-[64px] w-full px-4 py-4 rounded-xl border text-left font-medium transition-all', c.correct)
     }
     if (answer === selectedAnswer && !result.isCorrect) {
-      return cn('min-h-[62px] w-full px-4 py-3 rounded-xl border text-left font-medium', c.wrong)
+      return cn('min-h-[64px] w-full px-4 py-4 rounded-xl border text-left font-medium', c.wrong)
     }
-    return cn('min-h-[62px] w-full px-4 py-3 rounded-xl border text-left font-medium transition-all', c.dim)
+    return cn('min-h-[64px] w-full px-4 py-4 rounded-xl border text-left font-medium transition-all', c.dim)
   }
 
   const timerPct = (timeLeft / TIME_LIMIT) * 100
@@ -168,17 +168,17 @@ export function QuestionCard({
           </div>
         )}
 
-        <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-yellow-400 font-mono font-bold text-base tabular-nums">
+        <div className="flex items-center gap-1 shrink-0">
+          <span className="text-yellow-400 font-mono font-black text-lg tabular-nums leading-none">
             {score.toLocaleString()}
           </span>
-          <span className="text-zinc-600 text-xs">pts</span>
+          <span className="text-zinc-500 text-xs font-medium">pts</span>
         </div>
 
         {/* Timer digit */}
         <div
           className={cn(
-            'font-mono font-bold text-2xl w-10 text-center shrink-0 tabular-nums transition-colors',
+            'font-mono font-black text-3xl w-12 text-center shrink-0 tabular-nums transition-colors leading-none',
             timerColor,
             timeLeft <= 5 && 'animate-pulse',
           )}
@@ -190,12 +190,12 @@ export function QuestionCard({
       {/* Timer bar */}
       <Progress
         value={timerPct}
-        className={cn('h-1.5 bg-white/6 rounded-full', barClass)}
+        className={cn('h-2 bg-white/8 rounded-full', barClass)}
       />
 
       {/* Question */}
       <div className="border border-white/8 bg-card rounded-xl p-6 min-h-[100px] flex items-center">
-        <p className="text-base sm:text-lg font-medium leading-relaxed text-zinc-100">
+        <p className="text-lg sm:text-xl font-semibold leading-relaxed text-zinc-100">
           {question.questionText}
         </p>
       </div>
@@ -211,10 +211,10 @@ export function QuestionCard({
               disabled={selectedAnswer !== null || isLoading}
               className={getButtonClass(answer, i)}
             >
-              <span className={cn('font-bold mr-2.5 text-sm', c.letter)}>
+              <span className={cn('font-black mr-3 text-base shrink-0', c.letter)}>
                 {c.label}.
               </span>
-              <span className="text-sm leading-snug">{answer}</span>
+              <span className="text-base leading-snug">{answer}</span>
             </button>
           )
         })}

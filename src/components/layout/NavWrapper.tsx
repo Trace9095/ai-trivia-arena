@@ -10,7 +10,7 @@ type Props = {
 
 export function NavWrapper({ children, nav, footer }: Props) {
   const pathname = usePathname()
-  if (pathname?.startsWith('/tv')) {
+  if (pathname?.startsWith('/tv') || pathname?.startsWith('/rttv')) {
     return <>{children}</>
   }
   return (

@@ -29,7 +29,7 @@ export function SaveBanner() {
           localStorage.setItem('saveBannerDismissed', '1')
           setShow(false)
         }}
-        className="shrink-0 text-violet-400 hover:text-violet-200 transition-colors"
+        className="shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center text-violet-400 hover:text-violet-200 transition-colors -mr-2"
         aria-label="Dismiss"
       >
         <X className="h-4 w-4" />
