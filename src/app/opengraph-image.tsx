@@ -74,7 +74,7 @@ export default function OGImage() {
               fontWeight: 400,
             }}
           >
-            Every Question is Generated Fresh by Claude AI
+            Questions That Never Repeat
           </div>
           <div style={{ display: 'flex', gap: 24, marginTop: 20 }}>
             {['11 Categories', 'Daily Challenges', 'Global Leaderboard'].map((tag) => (
@@ -94,6 +94,18 @@ export default function OGImage() {
               </div>
             ))}
           </div>
+        </div>
+        {/* Footer */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 24,
+            fontSize: 14,
+            color: 'rgba(255,255,255,0.3)',
+            display: 'flex',
+          }}
+        >
+          Powered by Epic AI
         </div>
       </div>
     ),
