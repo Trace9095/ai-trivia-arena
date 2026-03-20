@@ -884,10 +884,16 @@ function RTTVContent() {
   const gs = gameState
   const joinUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://aitriviaarena.com'}/join`
   const isMilestone = gs !== null && gs.questionNumber > 0 && gs.questionNumber % 5 === 0
-  const lbCountdown =
-    gs?.status === 'showing_leaderboard' && gs.leaderboardEndsAt
-      ? Math.max(0, Math.ceil((new Date(gs.leaderboardEndsAt).getTime() - Date.now()) / 1000))
-      : 0
+  const [lbCountdown, setLbCountdown] = useState(0)
+  useEffect(() => {
+    if (gs?.status !== 'showing_leaderboard' || !gs.leaderboardEndsAt) { setLbCountdown(0); return }
+    const tick = () => {
+      setLbCountdown(Math.max(0, Math.ceil((new Date(gs.leaderboardEndsAt!).getTime() - Date.now()) / 1000)))
+    }
+    tick()
+    const id = setInterval(tick, 500)
+    return () => clearInterval(id)
+  }, [gs?.status, gs?.leaderboardEndsAt])
 
   const rootStyle: React.CSSProperties = {
     background: RT.bg,

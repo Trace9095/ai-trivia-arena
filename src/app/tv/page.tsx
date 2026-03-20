@@ -840,10 +840,16 @@ function TVPageContent() {
     gs !== null && gs.questionNumber > 0 && gs.questionNumber % 5 === 0
 
   // Leaderboard countdown
-  const lbCountdown =
-    gs?.status === 'showing_leaderboard' && gs.leaderboardEndsAt
-      ? Math.max(0, Math.ceil((new Date(gs.leaderboardEndsAt).getTime() - Date.now()) / 1000))
-      : 0
+  const [lbCountdown, setLbCountdown] = useState(0)
+  useEffect(() => {
+    if (gs?.status !== 'showing_leaderboard' || !gs.leaderboardEndsAt) { setLbCountdown(0); return }
+    const tick = () => {
+      setLbCountdown(Math.max(0, Math.ceil((new Date(gs.leaderboardEndsAt!).getTime() - Date.now()) / 1000)))
+    }
+    tick()
+    const id = setInterval(tick, 500)
+    return () => clearInterval(id)
+  }, [gs?.status, gs?.leaderboardEndsAt])
 
   // Voting countdown
   const [votingCountdown, setVotingCountdown] = useState(15)
