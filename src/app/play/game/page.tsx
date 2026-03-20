@@ -98,14 +98,14 @@ function GameContent() {
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-5 px-4">
-        <div className="p-5 rounded-2xl bg-violet-950/50 border border-violet-700/40 shadow-xl shadow-violet-500/10">
-          <Brain className="w-12 h-12 text-violet-400 animate-pulse" />
+        <div className="p-5 rounded-2xl bg-amber-950/50 border border-amber-700/40 shadow-xl shadow-amber-500/10">
+          <Brain className="w-12 h-12 text-amber-400 animate-pulse" />
         </div>
         <div className="text-center space-y-1.5">
           <p className="text-white font-semibold text-lg">Generating your questions...</p>
           <p className="text-zinc-500 text-sm">Claude AI is crafting unique trivia just for you</p>
         </div>
-        <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
+        <Loader2 className="w-6 h-6 animate-spin text-amber-400" />
       </div>
     )
   }

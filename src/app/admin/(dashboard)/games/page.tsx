@@ -74,7 +74,7 @@ export default async function AdminGamesPage() {
   return (
     <div className="p-8 max-w-5xl">
       <div className="flex items-center gap-3 mb-8">
-        <Gamepad2 className="w-6 h-6 text-purple-400" />
+        <Gamepad2 className="w-6 h-6 text-amber-400" />
         <div>
           <h1 className="text-2xl font-bold">Games</h1>
           <p className="text-muted-foreground text-sm">Analytics and game history</p>

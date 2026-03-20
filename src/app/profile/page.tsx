@@ -54,7 +54,7 @@ export default async function ProfilePage() {
           { label: 'Total Score', value: user.totalScore.toLocaleString(), icon: Trophy, color: 'text-yellow-400' },
           { label: 'Games Played', value: user.gamesPlayed, icon: Gamepad2, color: 'text-blue-400' },
           { label: 'Current Streak', value: user.streak, icon: Flame, color: 'text-orange-400' },
-          { label: 'Best Streak', value: user.longestStreak, icon: Star, color: 'text-purple-400' },
+          { label: 'Best Streak', value: user.longestStreak, icon: Star, color: 'text-amber-400' },
         ].map(({ label, value, icon: Icon, color }) => (
           <Card key={label} className="p-4 text-center">
             <Icon className={`w-5 h-5 mx-auto mb-2 ${color}`} />

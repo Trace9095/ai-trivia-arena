@@ -17,7 +17,7 @@ const ERROR_TYPE_COLORS: Record<string, string> = {
   auth: 'bg-yellow-500/10 text-yellow-400',
   db: 'bg-red-500/10 text-red-400',
   client: 'bg-blue-500/10 text-blue-400',
-  ai: 'bg-purple-500/10 text-purple-400',
+  ai: 'bg-amber-500/10 text-amber-400',
 }
 
 export default async function AdminErrorsPage() {

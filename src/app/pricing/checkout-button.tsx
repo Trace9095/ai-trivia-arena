@@ -57,7 +57,7 @@ export function CheckoutButton({
 
   const variantClass =
     variant === 'primary'
-      ? 'bg-violet-600 hover:bg-violet-500 text-white'
+      ? 'bg-amber-500 hover:bg-amber-400 text-zinc-900'
       : 'border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-100'
 
   return (

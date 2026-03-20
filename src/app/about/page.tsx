@@ -16,10 +16,10 @@ export default function AboutPage() {
 
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <section className="text-center space-y-4">
-          <Badge className="bg-violet-900/60 text-violet-300 border-violet-700 text-xs uppercase tracking-widest">
+          <Badge className="bg-amber-900/60 text-amber-300 border-amber-700 text-xs uppercase tracking-widest">
             Powered by Claude AI
           </Badge>
-          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent leading-tight">
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-amber-400 to-yellow-300 bg-clip-text text-transparent leading-tight">
             We&apos;re Building Trivia<br className="hidden sm:block" /> That Never Gets Old
           </h1>
           <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
@@ -29,7 +29,7 @@ export default function AboutPage() {
           <div className="pt-4">
             <Link
               href="/"
-              className="inline-flex items-center justify-center min-h-[44px] px-8 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-semibold text-base transition-colors"
+              className="inline-flex items-center justify-center min-h-[44px] px-8 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-900 font-semibold text-base transition-colors"
             >
               Start Playing
             </Link>
@@ -53,8 +53,8 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <Card className="bg-card border-white/8">
               <CardContent className="pt-6 flex flex-col items-center text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-violet-900/50 flex items-center justify-center">
-                  <Brain className="w-6 h-6 text-violet-400" />
+                <div className="w-12 h-12 rounded-full bg-amber-900/50 flex items-center justify-center">
+                  <Brain className="w-6 h-6 text-amber-400" />
                 </div>
                 <h3 className="font-semibold text-white text-lg">Play Daily</h3>
                 <p className="text-zinc-400 text-sm leading-relaxed">
@@ -66,8 +66,8 @@ export default function AboutPage() {
 
             <Card className="bg-card border-white/8">
               <CardContent className="pt-6 flex flex-col items-center text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-fuchsia-900/50 flex items-center justify-center">
-                  <Trophy className="w-6 h-6 text-fuchsia-400" />
+                <div className="w-12 h-12 rounded-full bg-yellow-900/50 flex items-center justify-center">
+                  <Trophy className="w-6 h-6 text-yellow-400" />
                 </div>
                 <h3 className="font-semibold text-white text-lg">Climb the Leaderboard</h3>
                 <p className="text-zinc-400 text-sm leading-relaxed">
@@ -95,8 +95,8 @@ export default function AboutPage() {
         {/* ── Stats ────────────────────────────────────────────────────────── */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { icon: Zap, label: '10,000+ questions generated', color: 'text-violet-400' },
-            { icon: Star, label: '12 categories', color: 'text-fuchsia-400' },
+            { icon: Zap, label: '10,000+ questions generated', color: 'text-amber-400' },
+            { icon: Star, label: '12 categories', color: 'text-yellow-400' },
             { icon: Tv, label: 'Real-time TV mode', color: 'text-blue-400' },
             { icon: Users, label: 'Global leaderboard', color: 'text-emerald-400' },
           ].map(({ icon: Icon, label, color }) => (
@@ -116,7 +116,7 @@ export default function AboutPage() {
             <CardContent className="pt-6 space-y-4 text-zinc-400 text-base leading-relaxed">
               <p>
                 AI Trivia Arena is built on{' '}
-                <span className="text-violet-300 font-medium">Claude AI by Anthropic</span> — one
+                <span className="text-amber-300 font-medium">Claude AI by Anthropic</span> — one
                 of the most capable large language models available. Every question you see is written
                 by Claude at the moment you request it, not pre-written by a human and stored in a
                 database.
@@ -143,7 +143,7 @@ export default function AboutPage() {
           </p>
           <Link
             href="/"
-            className="inline-flex items-center justify-center min-h-[44px] px-10 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-semibold text-base transition-colors"
+            className="inline-flex items-center justify-center min-h-[44px] px-10 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-900 font-semibold text-base transition-colors"
           >
             Start Playing
           </Link>

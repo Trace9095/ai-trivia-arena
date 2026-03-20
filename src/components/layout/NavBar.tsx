@@ -56,10 +56,10 @@ export function NavBar({ user }: NavBarProps) {
             href="/"
             className="flex items-center gap-2.5 font-bold text-lg shrink-0 group"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-lg shadow-violet-500/25 group-hover:shadow-violet-500/40 transition-shadow">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/25 group-hover:shadow-amber-500/40 transition-shadow">
               <Brain className="w-4 h-4 text-white" />
             </div>
-            <span className="hidden sm:inline bg-gradient-to-r from-blue-400 via-violet-400 to-purple-400 bg-clip-text text-transparent font-extrabold tracking-tight">
+            <span className="hidden sm:inline bg-gradient-to-r from-blue-400 via-amber-400 to-yellow-300 bg-clip-text text-transparent font-extrabold tracking-tight">
               AI Trivia Arena
             </span>
           </Link>
@@ -108,7 +108,7 @@ export function NavBar({ user }: NavBarProps) {
               <Link href="/auth/login" className="hidden sm:inline-flex">
                 <Button
                   size="sm"
-                  className="min-h-[44px] px-4 bg-violet-600 hover:bg-violet-500 text-white font-semibold shadow-lg shadow-violet-500/20 hover:shadow-violet-500/35 transition-all"
+                  className="min-h-[44px] px-4 bg-amber-500 hover:bg-amber-400 text-zinc-900 font-semibold shadow-lg shadow-amber-500/20 hover:shadow-amber-500/35 transition-all"
                 >
                   Sign In
                 </Button>
@@ -181,7 +181,7 @@ export function NavBar({ user }: NavBarProps) {
             <Link
               href="/auth/login"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold transition-all"
+              className="flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-900 text-sm font-semibold transition-all"
             >
               Sign In
             </Link>

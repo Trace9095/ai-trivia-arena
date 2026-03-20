@@ -156,7 +156,7 @@ export default async function AdminPage() {
 
   const topMetrics = [
     { label: 'Total Users', value: userCount.count.toLocaleString(), icon: Users, color: 'text-blue-400' },
-    { label: 'Solo Games', value: gameCount.count.toLocaleString(), icon: Gamepad2, color: 'text-purple-400' },
+    { label: 'Solo Games', value: gameCount.count.toLocaleString(), icon: Gamepad2, color: 'text-amber-400' },
     { label: 'Questions Generated', value: questionCount.count.toLocaleString(), icon: Brain, color: 'text-green-400' },
     { label: 'Answers Submitted', value: answerCount.count.toLocaleString(), icon: Target, color: 'text-yellow-400' },
   ]
@@ -169,7 +169,7 @@ export default async function AdminPage() {
   ]
 
   const tvMetrics = [
-    { label: 'TV Games Total', value: tvTotal.toLocaleString(), icon: Tv, color: 'text-purple-400' },
+    { label: 'TV Games Total', value: tvTotal.toLocaleString(), icon: Tv, color: 'text-amber-400' },
     { label: 'TV Games Today', value: tvToday.toLocaleString(), icon: MonitorPlay, color: 'text-blue-400' },
     { label: 'Active Now', value: tvActive.toLocaleString(), icon: Activity, color: tvActive > 0 ? 'text-green-400' : 'text-muted-foreground' },
     { label: 'Total TV Players', value: totalPlayers.toLocaleString(), icon: Users, color: 'text-yellow-400' },
@@ -184,8 +184,8 @@ export default async function AdminPage() {
       waiting: 'bg-yellow-500/10 text-yellow-400',
       active: 'bg-green-500/10 text-green-400',
       picking: 'bg-blue-500/10 text-blue-400',
-      showing_answer: 'bg-purple-500/10 text-purple-400',
-      showing_leaderboard: 'bg-purple-500/10 text-purple-400',
+      showing_answer: 'bg-amber-500/10 text-amber-400',
+      showing_leaderboard: 'bg-amber-500/10 text-amber-400',
       finished: 'bg-muted text-muted-foreground',
     }
     return map[s] ?? 'bg-muted text-muted-foreground'
@@ -224,7 +224,7 @@ export default async function AdminPage() {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-semibold flex items-center gap-2">
-            <Tv className="w-4 h-4 text-purple-400" />
+            <Tv className="w-4 h-4 text-amber-400" />
             TV Mode
           </h2>
           <Link href="/tv" className="text-xs text-blue-400 hover:underline">

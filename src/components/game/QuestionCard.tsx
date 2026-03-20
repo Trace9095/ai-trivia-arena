@@ -116,7 +116,7 @@ export function QuestionCard({
     const c = ANSWER_COLORS[i % 4]!
     if (!result) {
       return cn(
-        'min-h-[64px] w-full px-4 py-4 rounded-xl border text-left font-medium transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50',
+        'min-h-[64px] w-full px-4 py-4 rounded-xl border text-left font-medium transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50',
         selectedAnswer === null ? c.idle : cn(c.idle, 'cursor-not-allowed'),
       )
     }
@@ -137,7 +137,7 @@ export function QuestionCard({
       ? '[&>div]:bg-red-500'
       : timeLeft <= 10
       ? '[&>div]:bg-yellow-400'
-      : '[&>div]:bg-violet-500'
+      : '[&>div]:bg-amber-500'
 
   const isLastQuestion = questionNumber >= totalQuestions
 

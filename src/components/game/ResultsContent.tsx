@@ -24,8 +24,8 @@ function getGrade(accuracy: number): GradeConfig {
   if (accuracy === 100) return { grade: 'A+', label: 'Perfect Score!',    color: 'text-yellow-400', badgeBg: 'bg-yellow-950/60 text-yellow-400 border-yellow-700/50', barColor: 'from-yellow-500 to-amber-400' }
   if (accuracy >= 90)  return { grade: 'A+', label: 'Trivia Master!',    color: 'text-yellow-400', badgeBg: 'bg-yellow-950/60 text-yellow-400 border-yellow-700/50', barColor: 'from-yellow-500 to-green-400' }
   if (accuracy >= 80)  return { grade: 'A',  label: 'Excellent!',        color: 'text-green-400',  badgeBg: 'bg-green-950/60 text-green-400 border-green-700/50',   barColor: 'from-green-500 to-teal-400' }
-  if (accuracy >= 70)  return { grade: 'B',  label: 'Great Job!',        color: 'text-blue-400',   badgeBg: 'bg-blue-950/60 text-blue-400 border-blue-700/50',     barColor: 'from-blue-500 to-violet-500' }
-  if (accuracy >= 60)  return { grade: 'C',  label: 'Good Effort!',      color: 'text-violet-400', badgeBg: 'bg-violet-950/60 text-violet-400 border-violet-700/50',barColor: 'from-violet-500 to-purple-500' }
+  if (accuracy >= 70)  return { grade: 'B',  label: 'Great Job!',        color: 'text-blue-400',   badgeBg: 'bg-blue-950/60 text-blue-400 border-blue-700/50',     barColor: 'from-blue-500 to-amber-400' }
+  if (accuracy >= 60)  return { grade: 'C',  label: 'Good Effort!',      color: 'text-amber-400',  badgeBg: 'bg-amber-950/60 text-amber-400 border-amber-700/50',  barColor: 'from-amber-500 to-yellow-400' }
   return               { grade: 'D',  label: 'Keep Practicing!', color: 'text-zinc-400',   badgeBg: 'bg-zinc-800 text-zinc-400 border-zinc-700',              barColor: 'from-zinc-600 to-zinc-500' }
 }
 
@@ -36,7 +36,7 @@ function GradeIcon({ accuracy }: { accuracy: number }) {
   if (accuracy >= 80)   return <Medal  className={cn(cls, 'text-zinc-300')} />
   if (accuracy >= 70)   return <Medal  className={cn(cls, 'text-amber-600')} />
   if (accuracy >= 60)   return <Target className={cn(cls, 'text-blue-400')} />
-  return                       <Dumbbell className={cn(cls, 'text-violet-400')} />
+  return                       <Dumbbell className={cn(cls, 'text-amber-400')} />
 }
 
 export function ResultsContent() {
@@ -103,7 +103,7 @@ export function ResultsContent() {
             <div className="text-xs text-zinc-600 mt-1 uppercase tracking-wide font-medium">Correct</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold font-mono text-violet-400 tabular-nums">
+            <div className="text-3xl font-bold font-mono text-amber-400 tabular-nums">
               {accuracy}%
             </div>
             <div className="text-xs text-zinc-600 mt-1 uppercase tracking-wide font-medium">Accuracy</div>
@@ -154,7 +154,7 @@ export function ResultsContent() {
           {copied ? 'Copied to clipboard!' : 'Share Score'}
         </Button>
         <Link href="/play">
-          <Button className="w-full h-12 bg-violet-600 hover:bg-violet-500 font-bold shadow-lg shadow-violet-500/20 transition-all">
+          <Button className="w-full h-12 bg-amber-500 hover:bg-amber-400 text-zinc-900 font-bold shadow-lg shadow-amber-500/20 transition-all">
             <RotateCcw className="w-4 h-4 mr-2" />
             Play Again
           </Button>

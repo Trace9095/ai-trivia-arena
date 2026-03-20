@@ -352,7 +352,7 @@ function JoinContent() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 text-violet-400 animate-spin" />
+          <Loader2 className="w-10 h-10 text-amber-400 animate-spin" />
           <div className="text-white/50 font-bold text-lg">Loading game...</div>
         </div>
       </div>
@@ -466,8 +466,8 @@ function JoinContent() {
         {/* WAITING */}
         {(!st || st.status === 'waiting') && (
           <div className="text-center space-y-6">
-            <div className="w-20 h-20 mx-auto rounded-full bg-violet-950/50 border border-violet-700/40 flex items-center justify-center">
-              <Loader2 className="w-10 h-10 text-violet-400 animate-spin" />
+            <div className="w-20 h-20 mx-auto rounded-full bg-amber-950/50 border border-amber-700/40 flex items-center justify-center">
+              <Loader2 className="w-10 h-10 text-amber-400 animate-spin" />
             </div>
             <div className="space-y-2">
               <h2 className="text-2xl font-black text-white">Getting ready...</h2>
@@ -522,7 +522,7 @@ function JoinContent() {
               /* Vote buttons */
               <div className="grid grid-cols-1 gap-4">
                 {st.votingOptions.map((cat, i) => {
-                  const colors = ['bg-purple-600', 'bg-teal-600', 'bg-orange-600', 'bg-pink-600']
+                  const colors = ['bg-amber-600', 'bg-teal-600', 'bg-orange-600', 'bg-pink-600']
                   return (
                     <button
                       key={cat}

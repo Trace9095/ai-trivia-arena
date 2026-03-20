@@ -16,7 +16,7 @@ export const metadata = {
 const PLAN_META = {
   free:       { Icon: Zap,      accent: 'text-zinc-400',   ring: '',                          iconBg: 'bg-zinc-800 border-zinc-700' },
   proMonthly: { Icon: Star,     accent: 'text-blue-400',   ring: '',                          iconBg: 'bg-blue-950 border-blue-800' },
-  proYearly:  { Icon: Crown,    accent: 'text-violet-300', ring: 'ring-2 ring-violet-500/50', iconBg: 'bg-violet-950 border-violet-700' },
+  proYearly:  { Icon: Crown,    accent: 'text-amber-300',  ring: 'ring-2 ring-amber-500/50',  iconBg: 'bg-amber-950 border-amber-700' },
   lifetime:   { Icon: Infinity, accent: 'text-amber-400',  ring: '',                          iconBg: 'bg-amber-950 border-amber-800' },
 } as const
 
@@ -27,7 +27,7 @@ export default function PricingPage() {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-3 bg-gradient-to-r from-violet-400 via-blue-400 to-violet-400 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold mb-3 bg-gradient-to-r from-amber-400 via-blue-400 to-amber-400 bg-clip-text text-transparent tracking-tight">
             Pick Your Plan
           </h1>
           <p className="text-zinc-400 text-lg max-w-xl mx-auto">
@@ -153,13 +153,13 @@ function PlanCard({
       className={cn(
         'relative flex flex-col border bg-card transition-all',
         highlight
-          ? cn('border-violet-500/50 shadow-xl shadow-violet-500/10', meta.ring)
+          ? cn('border-amber-500/50 shadow-xl shadow-amber-500/10', meta.ring)
           : 'border-white/8 hover:border-white/14 hover:shadow-lg hover:shadow-black/20',
       )}
     >
       {badge && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
-          <span className="bg-violet-600 text-white text-xs font-bold px-3.5 py-1 rounded-full shadow-lg shadow-violet-500/30">
+          <span className="bg-amber-500 text-zinc-900 text-xs font-bold px-3.5 py-1 rounded-full shadow-lg shadow-amber-500/30">
             {badge}
           </span>
         </div>
@@ -190,7 +190,7 @@ function PlanCard({
         <ul className="space-y-2.5">
           {features.map((f) => (
             <li key={f} className="flex items-start gap-2.5 text-sm text-zinc-300">
-              <Check className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
+              <Check className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
               <span>{f}</span>
             </li>
           ))}

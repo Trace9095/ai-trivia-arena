@@ -42,14 +42,14 @@ function LoginForm() {
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div
           className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] rounded-full opacity-20 blur-3xl"
-          style={{ background: 'radial-gradient(circle, #7C3AED 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #D4A853 0%, transparent 70%)' }}
         />
       </div>
 
       <div className="relative w-full max-w-sm animate-fade-in-up">
         {/* Brand mark */}
         <div className="text-center mb-8">
-          <div className="inline-flex w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 items-center justify-center mb-5 shadow-2xl shadow-violet-500/30">
+          <div className="inline-flex w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-amber-500 items-center justify-center mb-5 shadow-2xl shadow-amber-500/30">
             <Brain className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-extrabold text-white tracking-tight">AI Trivia Arena</h1>
@@ -100,7 +100,7 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-12 text-base bg-white/5 border-white/10 focus:border-violet-500/60 focus:ring-violet-500/20 placeholder:text-zinc-600"
+                  className="h-12 text-base bg-white/5 border-white/10 focus:border-amber-500/60 focus:ring-amber-500/20 placeholder:text-zinc-600"
                   autoFocus
                 />
               </div>
@@ -112,7 +112,7 @@ function LoginForm() {
               <Button
                 type="submit"
                 disabled={status === 'loading' || !email}
-                className="w-full h-12 text-base font-bold bg-violet-600 hover:bg-violet-500 disabled:opacity-50 shadow-lg shadow-violet-500/20 transition-all"
+                className="w-full h-12 text-base font-bold bg-amber-500 hover:bg-amber-400 text-zinc-900 disabled:opacity-50 shadow-lg shadow-amber-500/20 transition-all"
               >
                 {status === 'loading' ? (
                   <>
@@ -134,7 +134,7 @@ function LoginForm() {
 
         {/* Feature footnote */}
         <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-zinc-700">
-          <Zap className="w-3 h-3 text-violet-600" />
+          <Zap className="w-3 h-3 text-amber-500" />
           AI-generated questions that never repeat
         </div>
       </div>
@@ -147,7 +147,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-violet-400" />
+          <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
         </div>
       }
     >

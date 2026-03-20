@@ -68,8 +68,8 @@ const HOW_IT_WORKS = [
     icon: Zap,
     title: 'AI Generates Questions',
     desc: 'Claude creates fresh questions instantly. Every game is unique — no repeats, ever.',
-    color: 'text-violet-400',
-    bg: 'bg-violet-500/10 border-violet-500/20',
+    color: 'text-amber-400',
+    bg: 'bg-amber-500/10 border-amber-500/20',
   },
   {
     step: '03',
@@ -112,19 +112,19 @@ export default function LandingPage() {
           />
           <div
             className="absolute top-10 right-1/4 w-[500px] h-[350px] rounded-full opacity-25 blur-3xl animate-pulse"
-            style={{ background: 'radial-gradient(circle, #7C3AED 0%, transparent 70%)', animationDuration: '10s', animationDelay: '2s' }}
+            style={{ background: 'radial-gradient(circle, #D4A853 0%, transparent 70%)', animationDuration: '10s', animationDelay: '2s' }}
           />
         </div>
 
         <div className="relative max-w-6xl mx-auto px-4 pt-28 pb-20 text-center">
-          <Badge className="mb-6 bg-violet-950/80 text-violet-300 border-violet-700/60 inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold tracking-wide backdrop-blur-sm">
+          <Badge className="mb-6 bg-amber-950/80 text-amber-300 border-amber-700/60 inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold tracking-wide backdrop-blur-sm">
             <Zap className="w-3 h-3" />
             Powered by Claude AI
           </Badge>
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight">
             AI Trivia That{' '}
-            <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-400 via-amber-400 to-yellow-300 bg-clip-text text-transparent">
               Never Repeats
             </span>
           </h1>
@@ -137,7 +137,7 @@ export default function LandingPage() {
             <Link href="/play">
               <Button
                 size="lg"
-                className="min-h-[52px] px-8 text-base font-bold w-full sm:w-auto bg-violet-600 hover:bg-violet-500 shadow-xl shadow-violet-500/25 hover:shadow-violet-500/40 transition-all"
+                className="min-h-[52px] px-8 text-base font-bold w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-zinc-900 shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 transition-all"
               >
                 <Zap className="w-4.5 h-4.5 mr-2" />
                 Play Daily Challenge
@@ -169,15 +169,15 @@ export default function LandingPage() {
 
       {/* ── TV Mode Highlight ─────────────────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 py-6">
-        <div className="relative overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-r from-violet-950/60 via-blue-950/40 to-violet-950/60 backdrop-blur-sm">
+        <div className="relative overflow-hidden rounded-2xl border border-amber-500/20 bg-gradient-to-r from-amber-950/60 via-blue-950/40 to-amber-950/60 backdrop-blur-sm">
           {/* Subtle inner glow */}
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-96 h-32 bg-violet-500/10 blur-2xl rounded-full" />
+            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-96 h-32 bg-amber-500/10 blur-2xl rounded-full" />
           </div>
 
           <div className="relative flex flex-col lg:flex-row items-center gap-8 p-8">
             <div className="flex-1">
-              <Badge className="mb-3 bg-violet-900/60 text-violet-300 border-violet-600/50 inline-flex items-center gap-1.5 text-xs font-semibold">
+              <Badge className="mb-3 bg-amber-900/60 text-amber-300 border-amber-600/50 inline-flex items-center gap-1.5 text-xs font-semibold">
                 <Tv className="w-3 h-3" /> Kahoot-style TV Mode
               </Badge>
               <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-white">
@@ -189,7 +189,7 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link href="/tv">
-                  <Button className="bg-violet-600 hover:bg-violet-500 font-semibold min-h-[44px] shadow-lg shadow-violet-500/20 transition-all">
+                  <Button className="bg-amber-500 hover:bg-amber-400 text-zinc-900 font-semibold min-h-[44px] shadow-lg shadow-amber-500/20 transition-all">
                     <Tv className="w-4 h-4 mr-2" />
                     Open TV Mode
                     <ChevronRight className="w-4 h-4 ml-1" />
@@ -218,7 +218,7 @@ export default function LandingPage() {
                   key={label}
                   className="glass-card rounded-xl px-4 py-3 text-center"
                 >
-                  <Icon className="w-5 h-5 mx-auto mb-1.5 text-violet-400" />
+                  <Icon className="w-5 h-5 mx-auto mb-1.5 text-amber-400" />
                   <div className="text-xs text-zinc-400 font-medium">{label}</div>
                 </div>
               ))}
@@ -233,7 +233,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
             {[
               { label: 'Players Registered', icon: Users,  value: stats?.totalPlayers, suffix: '+', color: 'text-blue-400' },
-              { label: 'Answers Submitted',  icon: Brain,  value: stats?.totalAnswers,  suffix: '+', color: 'text-violet-400' },
+              { label: 'Answers Submitted',  icon: Brain,  value: stats?.totalAnswers,  suffix: '+', color: 'text-amber-400' },
               { label: 'TV Games Today',     icon: Tv,     value: stats?.tvGamesToday,  suffix: '',  color: 'text-pink-400' },
               { label: 'Categories',         icon: Flame,  value: 11,                   suffix: '',  color: 'text-orange-400' },
             ].map(({ label, icon: Icon, value, suffix, color }) => (
@@ -318,10 +318,10 @@ export default function LandingPage() {
 
       {/* ── CTA ──────────────────────────────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 pb-24">
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-blue-950/60 via-violet-950/60 to-purple-950/60">
+        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-blue-950/60 via-amber-950/60 to-yellow-950/60">
           <div className="absolute inset-0 pointer-events-none bg-grid-pattern opacity-30" />
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-24 bg-violet-500/15 blur-2xl rounded-full" />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-24 bg-amber-500/15 blur-2xl rounded-full" />
           </div>
           <div className="relative text-center p-10 sm:p-16">
             <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-white">
@@ -334,7 +334,7 @@ export default function LandingPage() {
               <Link href="/auth/login" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="min-h-[52px] px-10 text-base font-bold w-full bg-violet-600 hover:bg-violet-500 shadow-xl shadow-violet-500/25 transition-all"
+                  className="min-h-[52px] px-10 text-base font-bold w-full bg-amber-500 hover:bg-amber-400 text-zinc-900 shadow-xl shadow-amber-500/25 transition-all"
                 >
                   Play Free — No Credit Card
                 </Button>

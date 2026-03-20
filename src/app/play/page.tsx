@@ -63,13 +63,13 @@ export default async function PlayPage() {
         <div className="lg:col-span-2 space-y-6">
 
           {/* Daily Challenge card */}
-          <div className="relative overflow-hidden rounded-2xl border border-violet-500/25 bg-gradient-to-br from-violet-950/60 via-blue-950/40 to-violet-950/50">
+          <div className="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-gradient-to-br from-amber-950/60 via-blue-950/40 to-amber-950/50">
             {/* Glow */}
-            <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-64 h-20 bg-violet-500/15 blur-2xl rounded-full pointer-events-none" />
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-64 h-20 bg-amber-500/15 blur-2xl rounded-full pointer-events-none" />
             <div className="relative p-7">
               <div className="flex items-center gap-2 mb-4">
-                <Calendar className="w-4.5 h-4.5 text-violet-400" />
-                <Badge className="bg-violet-900/70 text-violet-300 border-violet-600/50 text-xs font-semibold">
+                <Calendar className="w-4.5 h-4.5 text-amber-400" />
+                <Badge className="bg-amber-900/70 text-amber-300 border-amber-600/50 text-xs font-semibold">
                   Daily Challenge
                 </Badge>
               </div>
@@ -80,7 +80,7 @@ export default async function PlayPage() {
               <Link href="/play/daily">
                 <Button
                   size="lg"
-                  className="w-full h-14 text-base font-bold bg-violet-600 hover:bg-violet-500 shadow-lg shadow-violet-500/20 transition-all"
+                  className="w-full h-14 text-base font-bold bg-amber-500 hover:bg-amber-400 text-zinc-900 shadow-lg shadow-amber-500/20 transition-all"
                 >
                   <Zap className="w-5 h-5 mr-2" />
                   Start Daily Challenge
@@ -176,7 +176,7 @@ export default async function PlayPage() {
           {/* Multiplayer coming soon */}
           <Card className="p-5 border-white/8 bg-card">
             <h3 className="font-semibold mb-3 flex items-center gap-2 text-sm text-zinc-200">
-              <Users className="w-4 h-4 text-purple-400" />
+              <Users className="w-4 h-4 text-amber-400" />
               Multiplayer
             </h3>
             <p className="text-xs text-zinc-500 mb-3 leading-relaxed">

@@ -10,7 +10,7 @@ export default function NotFound() {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 text-center">
       <div className="max-w-md w-full space-y-6">
         <p
-          className="text-8xl font-extrabold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent"
+          className="text-8xl font-extrabold bg-gradient-to-r from-blue-500 to-amber-500 bg-clip-text text-transparent"
           aria-label="Error 404"
         >
           404

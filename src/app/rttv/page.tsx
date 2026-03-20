@@ -18,6 +18,12 @@ import {
   Gift,
   Music,
   Instagram,
+  UtensilsCrossed,
+  Mountain,
+  GlassWater,
+  Beer,
+  Sunrise,
+  type LucideIcon,
 } from 'lucide-react'
 
 const playfair = Playfair_Display({
@@ -102,14 +108,14 @@ function RTLogo({ height = 52 }: { height?: number }) {
 }
 
 // ─── RT Daily Specials ────────────────────────────────────────────────────────
-const RT_SPECIALS = [
-  { day: 'MON', label: 'Margarita Monday', desc: 'BOGO margaritas all night', icon: '🍹' },
-  { day: 'TUE', label: 'Taste Tuesday', desc: '20% off all shareables', icon: '🍽️' },
-  { day: 'WED', label: "Locals' Day", desc: 'Fremont County ID gets a treat', icon: '🏔️' },
-  { day: 'THU', label: 'Thirsty Thursday', desc: '20% off all cocktails', icon: '🥂' },
-  { day: 'FRI', label: 'Friday Kickoff', desc: '$5 domestics · $25 buckets', icon: '🍺' },
-  { day: 'SAT', label: 'Live Music Night', desc: 'Local artists every Saturday', icon: '🎵' },
-  { day: 'SUN', label: 'Sunday Funday', desc: '$8 mimosas all afternoon', icon: '🌅' },
+const RT_SPECIALS: { day: string; label: string; desc: string; Icon: LucideIcon }[] = [
+  { day: 'MON', label: 'Margarita Monday', desc: 'BOGO margaritas all night', Icon: GlassWater },
+  { day: 'TUE', label: 'Taste Tuesday', desc: '20% off all shareables', Icon: UtensilsCrossed },
+  { day: 'WED', label: "Locals' Day", desc: 'Fremont County ID gets a treat', Icon: Mountain },
+  { day: 'THU', label: 'Thirsty Thursday', desc: '20% off all cocktails', Icon: GlassWater },
+  { day: 'FRI', label: 'Friday Kickoff', desc: '$5 domestics · $25 buckets', Icon: Beer },
+  { day: 'SAT', label: 'Live Music Night', desc: 'Local artists every Saturday', Icon: Music },
+  { day: 'SUN', label: 'Sunday Funday', desc: '$8 mimosas all afternoon', Icon: Sunrise },
 ]
 
 // ─── RT Promo Slides ──────────────────────────────────────────────────────────
