@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { eq, and } from 'drizzle-orm'
 import { getDb } from '@/db'
-import { liveGames, livePlayers, liveAnswers } from '@/db/schema'
+import { liveGames, livePlayers, liveAnswers, liveVotes } from '@/db/schema'
 import {
   getCurrentQuestion,
   getShuffledAnswers,
@@ -111,6 +111,47 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ code
     }
   }
 
+  // Voting state
+  let votingOptions: string[] | null = null
+  let hasVoted = false
+  let voteCounts: Record<string, number> | null = null
+
+  if (game.status === 'voting') {
+    votingOptions = game.votingOptions as string[] | null
+
+    if (votingOptions?.length) {
+      const [myVote] = await db
+        .select({ id: liveVotes.id, category: liveVotes.category })
+        .from(liveVotes)
+        .where(
+          and(
+            eq(liveVotes.gameId, game.id),
+            eq(liveVotes.playerId, playerId),
+            eq(liveVotes.questionNumber, game.globalQuestionCount)
+          )
+        )
+        .limit(1)
+
+      hasVoted = !!myVote
+
+      const allVotes = await db
+        .select()
+        .from(liveVotes)
+        .where(
+          and(
+            eq(liveVotes.gameId, game.id),
+            eq(liveVotes.questionNumber, game.globalQuestionCount)
+          )
+        )
+
+      voteCounts = {}
+      for (const opt of votingOptions) voteCounts[opt] = 0
+      for (const v of allVotes) {
+        voteCounts[v.category] = (voteCounts[v.category] ?? 0) + 1
+      }
+    }
+  }
+
   return NextResponse.json({
     status: game.status,
     theme: game.theme,
@@ -126,6 +167,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ code
     isPicker,
     pickerName,
     categoryPickDeadline: game.categoryPickDeadline,
+    votingDeadline: game.status === 'voting' ? game.categoryPickDeadline : null,
+    votingOptions,
+    hasVoted,
+    voteCounts,
     question: questionData,
     hasAnswered,
     myLastAnswer,

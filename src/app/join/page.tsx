@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Target, Loader2, Flame, CheckCircle2, XCircle, Trophy, Medal } from 'lucide-react'
+import { Target, Loader2, Flame, CheckCircle2, XCircle, Trophy, Medal, Vote, X } from 'lucide-react'
 
 const ANSWER_COLORS = [
   { bg: 'bg-red-600', border: 'border-red-400', label: 'A', hex: '#DC2626' },
@@ -11,6 +11,20 @@ const ANSWER_COLORS = [
   { bg: 'bg-green-600', border: 'border-green-400', label: 'C', hex: '#16A34A' },
   { bg: 'bg-yellow-500', border: 'border-yellow-300', label: 'D', hex: '#EAB308' },
 ]
+
+const CATEGORY_LABELS: Record<string, string> = {
+  general: 'General Knowledge',
+  science: 'Science & Nature',
+  history: 'History',
+  geography: 'Geography',
+  pop_culture: 'Pop Culture',
+  sports: 'Sports',
+  food_drink: 'Food & Drink',
+  technology: 'Technology',
+  movies_tv: 'Movies & TV',
+  music: 'Music',
+  colorado: 'Colorado & Local',
+}
 
 interface PlayerState {
   status: string
@@ -27,6 +41,10 @@ interface PlayerState {
   isPicker: boolean
   pickerName: string | null
   categoryPickDeadline: string | null
+  votingDeadline: string | null
+  votingOptions: string[] | null
+  hasVoted: boolean
+  voteCounts: Record<string, number> | null
   question: {
     globalIndex: number
     indexInRound: number
@@ -47,6 +65,124 @@ interface PlayerState {
   finishedAt: string | null
 }
 
+// ── Save Score Modal ──────────────────────────────────────────────────────────
+function SaveScoreModal({
+  score,
+  rank,
+  totalPlayers,
+  onClose,
+}: {
+  score: number
+  rank: number
+  totalPlayers: number
+  onClose: () => void
+}) {
+  const [email, setEmail] = useState('')
+  const [sending, setSending] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const submit = async () => {
+    if (!email.trim() || sending) return
+    setSending(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/auth/magic-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      })
+      if (!res.ok) throw new Error('Failed to send')
+      setSent(true)
+    } catch {
+      setError('Could not send. Check your email and try again.')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-4 bg-black/70 backdrop-blur-sm">
+      <div className="w-full max-w-sm bg-[#12121a] border border-white/15 rounded-3xl p-6 space-y-5 mb-4">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="text-white font-black text-xl">Save your score?</h3>
+            <p className="text-white/40 text-sm mt-0.5">
+              #{rank} of {totalPlayers} · {score.toLocaleString()} pts
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-white/30 hover:text-white/60 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2 -mt-1"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {sent ? (
+          <div className="text-center py-4 space-y-2">
+            <CheckCircle2 className="w-12 h-12 text-green-400 mx-auto" />
+            <div className="text-white font-bold text-lg">Check your email!</div>
+            <div className="text-white/40 text-sm">We sent a sign-in link to {email}</div>
+            <button
+              onClick={onClose}
+              className="w-full mt-3 py-3 rounded-2xl bg-white/5 border border-white/15 text-white/60 font-bold min-h-[48px]"
+            >
+              Done
+            </button>
+          </div>
+        ) : (
+          <>
+            <div>
+              <label className="text-white/50 text-sm font-bold block mb-2">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full bg-white/5 border border-white/20 rounded-2xl px-4 py-3 text-white font-bold focus:outline-none focus:border-blue-500"
+                onKeyDown={(e) => e.key === 'Enter' && submit()}
+                autoFocus
+              />
+            </div>
+            {error && <p className="text-red-400 text-sm font-bold">{error}</p>}
+            <button
+              onClick={submit}
+              disabled={sending || !email.trim()}
+              className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-black text-lg transition-all min-h-[56px]"
+            >
+              {sending ? <><Loader2 className="w-4 h-4 animate-spin inline mr-2" />Sending...</> : 'Save Score'}
+            </button>
+            <button
+              onClick={onClose}
+              className="w-full py-3 text-white/30 text-sm font-bold hover:text-white/50 transition-colors"
+            >
+              No thanks, just leave
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ── Voting countdown timer ────────────────────────────────────────────────────
+function VoteCountdown({ deadline }: { deadline: string | null }) {
+  const [secs, setSecs] = useState(15)
+  useEffect(() => {
+    if (!deadline) return
+    const tick = () => {
+      const left = Math.max(0, Math.ceil((new Date(deadline).getTime() - Date.now()) / 1000))
+      setSecs(left)
+    }
+    tick()
+    const id = setInterval(tick, 500)
+    return () => clearInterval(id)
+  }, [deadline])
+  return <span className={cn('font-black tabular-nums', secs <= 5 && 'text-red-400')}>{secs}s</span>
+}
+
 function JoinContent() {
   const searchParams = useSearchParams()
   const prefilledCode = searchParams.get('code')?.toUpperCase() ?? ''
@@ -64,24 +200,23 @@ function JoinContent() {
   const [submitting, setSubmitting] = useState(false)
   const [showCodeInput, setShowCodeInput] = useState(false)
   const [manualCode, setManualCode] = useState(prefilledCode)
+  const [showSaveModal, setShowSaveModal] = useState(false)
+  const [votedCategory, setVotedCategory] = useState<string | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const prevQuestionRef = useRef<number>(-1)
+  const prevStatusRef = useRef<string>('')
 
-  // On mount: load current always-on game, check for saved session
   useEffect(() => {
     async function init() {
       try {
-        // Fetch current always-on game to get today's code
         const res = await fetch('/api/games/live/current')
         const todayCode = res.ok ? ((await res.json()) as { gameCode?: string }).gameCode ?? '' : ''
         setCurrentGameCode(todayCode)
 
-        // Check localStorage for a valid saved session
         const saved = localStorage.getItem('trivia_player')
         if (saved) {
           try {
             const { playerId: pid, gameCode: gc } = JSON.parse(saved) as { playerId: string; gameCode: string }
-            // Only restore if it's today's game (or a prefilled private code)
             if (pid && gc && (gc === todayCode || (prefilledCode && gc === prefilledCode))) {
               setPlayerId(pid)
               setGameCode(gc)
@@ -91,7 +226,7 @@ function JoinContent() {
           } catch { /* ignore */ }
           localStorage.removeItem('trivia_player')
         }
-      } catch { /* network error */ }
+      } catch { /* network */ }
       setPhase('join')
     }
     init()
@@ -103,11 +238,9 @@ function JoinContent() {
     setJoining(true)
     setError(null)
     try {
-      // Use always-on join if no manual code, otherwise use the private game join
       const url = (!showCodeInput && currentGameCode)
         ? '/api/games/live/current/join'
         : `/api/games/live/${targetCode}/join`
-
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -136,12 +269,19 @@ function JoinContent() {
       if (!res.ok) return
       const data = (await res.json()) as PlayerState
       setState(data)
+
+      // Reset answer state on new question
       if (data.question && data.question.globalIndex !== prevQuestionRef.current) {
         prevQuestionRef.current = data.question.globalIndex
         setSelectedAnswer(null)
         setAnswerResult(null)
       }
-    } catch { /* network — retry */ }
+      // Reset voted category when leaving voting phase
+      if (data.status !== 'voting' && prevStatusRef.current === 'voting') {
+        setVotedCategory(null)
+      }
+      prevStatusRef.current = data.status
+    } catch { /* retry */ }
   }, [playerId, gameCode])
 
   useEffect(() => {
@@ -158,10 +298,7 @@ function JoinContent() {
     setSelectedAnswer(answer)
     setSubmitting(true)
     try {
-      // For always-on games, use the current/answer endpoint (no code needed)
-      // For private games, use the regular answer endpoint
-      const url = `/api/games/live/${gameCode}/answer`
-      const res = await fetch(url, {
+      const res = await fetch(`/api/games/live/${gameCode}/answer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ playerId, selectedAnswer: answer, timeMs }),
@@ -175,7 +312,30 @@ function JoinContent() {
     }
   }
 
+  const submitVote = async (category: string) => {
+    if (!playerId || votedCategory || state?.hasVoted) return
+    setVotedCategory(category)
+    try {
+      await fetch('/api/games/live/current/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerId, category }),
+      })
+    } catch { /* ignore */ }
+    // Re-poll immediately to get updated vote counts
+    poll()
+  }
+
   const leaveGame = () => {
+    // Show save modal if they have a score
+    if (state && state.myScore > 0) {
+      setShowSaveModal(true)
+      return
+    }
+    doLeave()
+  }
+
+  const doLeave = () => {
     localStorage.removeItem('trivia_player')
     setPhase('join')
     setPlayerId(null)
@@ -183,10 +343,11 @@ function JoinContent() {
     setState(null)
     setSelectedAnswer(null)
     setAnswerResult(null)
+    setShowSaveModal(false)
     if (pollRef.current) clearInterval(pollRef.current)
   }
 
-  // ── LOADING ─────────────────────────────────────────────────────────────────
+  // ── LOADING ───────────────────────────────────────────────────────────────
   if (phase === 'loading') {
     return (
       <div className="min-h-screen bg-[#0A0A14] flex items-center justify-center">
@@ -195,7 +356,7 @@ function JoinContent() {
     )
   }
 
-  // ── JOIN SCREEN ─────────────────────────────────────────────────────────────
+  // ── JOIN ──────────────────────────────────────────────────────────────────
   if (phase === 'join') {
     return (
       <div className="min-h-screen bg-[#0A0A14] flex flex-col items-center justify-center px-4">
@@ -206,14 +367,11 @@ function JoinContent() {
             </div>
             <h1 className="text-3xl font-black text-white">AI Trivia Arena</h1>
             <p className="text-white/50 mt-2">
-              {currentGameCode
-                ? 'Join the live game — no account needed'
-                : 'Enter a game code to join'}
+              {currentGameCode ? 'Join the live game — no account needed' : 'Enter a game code to join'}
             </p>
           </div>
 
           <div className="space-y-4">
-            {/* Name field */}
             <div>
               <label className="text-white/60 text-sm font-bold block mb-2">Your Name</label>
               <input
@@ -226,7 +384,6 @@ function JoinContent() {
               />
             </div>
 
-            {/* Manual code input (collapsed by default when auto-join is available) */}
             {currentGameCode && !showCodeInput ? (
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-px bg-white/10" />
@@ -268,11 +425,21 @@ function JoinContent() {
     )
   }
 
-  // ── PLAYING SCREENS ─────────────────────────────────────────────────────────
+  // ── PLAYING ───────────────────────────────────────────────────────────────
   const st = state
 
   return (
     <div className="min-h-screen bg-[#0A0A14] flex flex-col">
+      {/* Save score modal */}
+      {showSaveModal && st && (
+        <SaveScoreModal
+          score={st.myScore}
+          rank={st.myRank}
+          totalPlayers={st.totalPlayers}
+          onClose={doLeave}
+        />
+      )}
+
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 shrink-0">
         <div className="text-white/50 text-sm font-bold">
@@ -293,12 +460,77 @@ function JoinContent() {
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-6">
 
-        {/* WAITING / LOADING */}
+        {/* WAITING */}
         {(!st || st.status === 'waiting') && (
           <div className="text-center space-y-6">
             <Loader2 className="w-16 h-16 text-blue-400 animate-spin" />
             <h2 className="text-2xl font-black text-white">Getting ready...</h2>
             <p className="text-white/50">First question is coming up!</p>
+          </div>
+        )}
+
+        {/* VOTING */}
+        {st?.status === 'voting' && st.votingOptions && (
+          <div className="w-full space-y-5">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 text-white font-black text-2xl mb-1">
+                <Vote className="w-7 h-7 text-blue-400" />
+                Pick the next category!
+              </div>
+              <div className="text-white/40 text-sm">
+                Vote ends in <VoteCountdown deadline={st.votingDeadline} />
+              </div>
+            </div>
+
+            {(st.hasVoted || !!votedCategory) ? (
+              /* Results view after voting */
+              <div className="space-y-3">
+                <p className="text-center text-white/50 text-sm font-bold">
+                  You voted for <span className="text-white">{CATEGORY_LABELS[votedCategory ?? ''] ?? votedCategory}</span>
+                </p>
+                {st.votingOptions.map((cat) => {
+                  const votes = st.voteCounts?.[cat] ?? 0
+                  const total = Object.values(st.voteCounts ?? {}).reduce((a, b) => a + b, 0)
+                  const pct = total > 0 ? Math.round((votes / total) * 100) : 0
+                  const isMyVote = cat === votedCategory
+                  return (
+                    <div key={cat} className="space-y-1">
+                      <div className="flex justify-between text-sm font-bold">
+                        <span className={cn('text-white', isMyVote && 'text-blue-400')}>
+                          {CATEGORY_LABELS[cat] ?? cat}
+                        </span>
+                        <span className="text-white/40">{votes} vote{votes !== 1 ? 's' : ''}</span>
+                      </div>
+                      <div className="h-3 bg-white/5 rounded-full overflow-hidden">
+                        <div
+                          className={cn('h-full rounded-full transition-all duration-700', isMyVote ? 'bg-blue-500' : 'bg-white/20')}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              /* Vote buttons */
+              <div className="grid grid-cols-1 gap-4">
+                {st.votingOptions.map((cat, i) => {
+                  const colors = ['bg-purple-600', 'bg-teal-600', 'bg-orange-600', 'bg-pink-600']
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => submitVote(cat)}
+                      className={cn(
+                        'min-h-[64px] rounded-2xl border-2 border-transparent flex items-center gap-4 px-5 text-white font-black text-lg text-left transition-all active:scale-95',
+                        colors[i % 4]
+                      )}
+                    >
+                      {CATEGORY_LABELS[cat] ?? cat}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -428,7 +660,7 @@ function JoinContent() {
           </div>
         )}
 
-        {/* FINISHED (private games only) */}
+        {/* FINISHED */}
         {st?.status === 'finished' && (
           <div className="w-full space-y-6">
             <div className="text-center">
@@ -460,9 +692,15 @@ function JoinContent() {
             </div>
             <button
               onClick={leaveGame}
-              className="w-full py-4 rounded-2xl border border-white/20 text-white/60 font-bold hover:bg-white/5 transition-all min-h-[56px]"
+              className="w-full py-4 rounded-2xl bg-blue-600 text-white font-black text-lg transition-all min-h-[56px]"
             >
-              Play Another Game
+              Save My Score
+            </button>
+            <button
+              onClick={doLeave}
+              className="w-full py-3 rounded-2xl border border-white/10 text-white/40 font-bold hover:bg-white/5 transition-all"
+            >
+              Play Again
             </button>
           </div>
         )}

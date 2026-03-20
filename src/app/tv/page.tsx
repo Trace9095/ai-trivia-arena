@@ -54,16 +54,33 @@ const THEMES = {
 } as const
 
 type ThemeKey = keyof typeof THEMES
-type DisplayPhase = 'question' | 'revealing' | 'leaderboard'
+type DisplayPhase = 'question' | 'revealing' | 'leaderboard' | 'voting'
+
+const CATEGORY_LABELS: Record<string, string> = {
+  general: 'General Knowledge',
+  science: 'Science & Nature',
+  history: 'History',
+  geography: 'Geography',
+  pop_culture: 'Pop Culture',
+  sports: 'Sports',
+  food_drink: 'Food & Drink',
+  technology: 'Technology',
+  movies_tv: 'Movies & TV',
+  music: 'Music',
+  colorado: 'Colorado & Local',
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AlwaysOnState {
   gameCode: string
   theme: string
-  status: 'active' | 'showing_leaderboard'
+  status: 'active' | 'showing_leaderboard' | 'voting'
   questionNumber: number
   questionStartedAt: string | null
   leaderboardEndsAt: string | null
+  votingDeadline: string | null
+  votingOptions: string[] | null
+  voteCounts: Record<string, number> | null
   timePerQuestion: number
   playerCount: number
   question: {
@@ -521,6 +538,125 @@ function LeaderboardScreen({
   )
 }
 
+// ─── Voting screen ────────────────────────────────────────────────────────────
+function VotingScreen({
+  state,
+  theme,
+  countdown,
+}: {
+  state: AlwaysOnState
+  theme: (typeof THEMES)[ThemeKey]
+  countdown: number
+}) {
+  const options = state.votingOptions ?? []
+  const counts = state.voteCounts ?? {}
+  const total = Object.values(counts).reduce((a, b) => a + b, 0)
+  const maxVotes = Math.max(1, ...options.map((c) => counts[c] ?? 0))
+
+  const VOTE_COLORS = ['#8B5CF6', '#06B6D4', '#F97316', '#EC4899']
+
+  return (
+    <div
+      className="flex-1 flex flex-col items-center justify-center"
+      style={{ padding: '40px 80px', gap: 40 }}
+    >
+      {/* Header */}
+      <div className="text-center">
+        <div
+          className="font-black text-white"
+          style={{ fontSize: 72, lineHeight: 1.05, letterSpacing: '-0.02em' }}
+        >
+          Choose Next Category
+        </div>
+        <div
+          className="font-bold mt-3"
+          style={{ fontSize: 36, color: theme.accentColor }}
+        >
+          {state.playerCount} player{state.playerCount !== 1 ? 's' : ''} voting · closing in{' '}
+          <span
+            className={cn('font-black tabular-nums', countdown <= 5 && 'text-red-400')}
+            style={{ color: countdown <= 5 ? '#EF4444' : 'inherit' }}
+          >
+            {countdown}s
+          </span>
+        </div>
+      </div>
+
+      {/* Category cards */}
+      <div
+        className="w-full grid grid-cols-2"
+        style={{ gap: 24, maxWidth: 1200 }}
+      >
+        {options.map((cat, i) => {
+          const votes = counts[cat] ?? 0
+          const pct = total > 0 ? (votes / total) * 100 : 0
+          const isLeading = votes === maxVotes && total > 0
+          const color = VOTE_COLORS[i % VOTE_COLORS.length]!
+
+          return (
+            <div
+              key={cat}
+              className="rounded-3xl flex flex-col"
+              style={{
+                background: isLeading ? `${color}22` : 'rgba(255,255,255,0.05)',
+                border: `3px solid ${isLeading ? color : 'rgba(255,255,255,0.12)'}`,
+                padding: '28px 36px',
+                gap: 16,
+                transition: 'all 0.5s ease',
+                animation: `tv-fade-in-up 0.4s ease ${i * 80}ms both`,
+              }}
+            >
+              {/* Category name */}
+              <div
+                className="font-black text-white"
+                style={{ fontSize: 48, lineHeight: 1.1 }}
+              >
+                {CATEGORY_LABELS[cat] ?? cat}
+              </div>
+
+              {/* Vote bar */}
+              <div className="h-5 bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${pct}%`,
+                    background: color,
+                    transition: 'width 0.7s cubic-bezier(0.4,0,0.2,1)',
+                  }}
+                />
+              </div>
+
+              {/* Vote count */}
+              <div className="flex items-center justify-between">
+                <span
+                  className="font-black tabular-nums"
+                  style={{ fontSize: 36, color: isLeading ? color : 'rgba(255,255,255,0.4)' }}
+                >
+                  {votes} vote{votes !== 1 ? 's' : ''}
+                </span>
+                <span
+                  className="font-bold tabular-nums"
+                  style={{ fontSize: 28, color: 'rgba(255,255,255,0.3)' }}
+                >
+                  {Math.round(pct)}%
+                </span>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Prompt */}
+      <div
+        className="font-bold text-white/30 text-center"
+        style={{ fontSize: 28 }}
+      >
+        Vote on your phone · scan the QR code to join
+      </div>
+    </div>
+  )
+}
+
 // ─── Question screen ──────────────────────────────────────────────────────────
 function QuestionScreen({
   state,
@@ -661,18 +797,22 @@ function TVPageContent() {
 
       // ── Display phase state machine ──────────────────────────────────────
       if (data.status === 'showing_leaderboard' && prevStatusRef.current === 'active') {
-        // Just transitioned → show answer reveal on the question screen first
+        // Just transitioned → show answer reveal first
         setDisplayPhase('revealing')
         if (revealTimerRef.current) clearTimeout(revealTimerRef.current)
         revealTimerRef.current = setTimeout(() => {
           setDisplayPhase('leaderboard')
         }, 2600)
+      } else if (data.status === 'voting') {
+        // Voting phase — show immediately
+        if (revealTimerRef.current) clearTimeout(revealTimerRef.current)
+        setDisplayPhase('voting')
       } else if (data.status === 'active') {
-        // New question started → reset to question phase
+        // New question started → reset
         if (revealTimerRef.current) clearTimeout(revealTimerRef.current)
         setDisplayPhase('question')
       }
-      // If still showing_leaderboard and we're already in leaderboard/revealing, don't reset
+      // Still showing_leaderboard and already in leaderboard/revealing — don't reset
 
       prevStatusRef.current = data.status
     } catch {
@@ -704,6 +844,18 @@ function TVPageContent() {
     gs?.status === 'showing_leaderboard' && gs.leaderboardEndsAt
       ? Math.max(0, Math.ceil((new Date(gs.leaderboardEndsAt).getTime() - Date.now()) / 1000))
       : 0
+
+  // Voting countdown
+  const [votingCountdown, setVotingCountdown] = useState(15)
+  useEffect(() => {
+    if (gs?.status !== 'voting' || !gs.votingDeadline) return
+    const tick = () => {
+      setVotingCountdown(Math.max(0, Math.ceil((new Date(gs.votingDeadline!).getTime() - Date.now()) / 1000)))
+    }
+    tick()
+    const id = setInterval(tick, 500)
+    return () => clearInterval(id)
+  }, [gs?.status, gs?.votingDeadline])
 
   // ── Loading ─────────────────────────────────────────────────────────────────
   if (!gs && !error) {
@@ -771,6 +923,15 @@ function TVPageContent() {
           countdown={lbCountdown}
           isKiosk={isKiosk}
           isMilestone={isMilestone}
+        />
+      )}
+
+      {/* Voting — category pick between milestones */}
+      {displayPhase === 'voting' && (
+        <VotingScreen
+          state={gs!}
+          theme={theme}
+          countdown={votingCountdown}
         />
       )}
     </div>
