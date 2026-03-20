@@ -39,6 +39,8 @@ export async function POST(request: Request) {
       metadata: {
         userId: session.userId,
         plan,
+        site: "trivia-arena",
+        app_url: "ai-trivia-arena.vercel.app",
       },
     })
 
