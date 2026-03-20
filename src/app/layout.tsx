@@ -42,6 +42,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
   manifest: '/site.webmanifest',
   themeColor: [
     { media: '(prefers-color-scheme: dark)', color: '#7C3AED' },
