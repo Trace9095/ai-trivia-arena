@@ -1,4 +1,10 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
+
+export const metadata: Metadata = {
+  title: 'Game Results',
+  description: 'See how you scored in your last AI Trivia Arena game.',
+}
 import { ResultsContent } from '@/components/game/ResultsContent'
 import { Loader2 } from 'lucide-react'
 

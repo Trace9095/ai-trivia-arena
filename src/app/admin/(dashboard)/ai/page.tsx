@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { getDb } from '@/db'
 import { aiUsageLogs } from '@/db/schema'
 import { count, sum, avg, desc, gte, sql } from 'drizzle-orm'
 import { Card } from '@/components/ui/card'
 import { Brain } from 'lucide-react'
 import { DailyUsageChart } from '@/components/admin/DailyUsageChart'
+
+export const metadata: Metadata = {
+  title: 'AI Usage — Admin',
+  robots: { index: false, follow: false },
+}
 
 export const dynamic = 'force-dynamic'
 

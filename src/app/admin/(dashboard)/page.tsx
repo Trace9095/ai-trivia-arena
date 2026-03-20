@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getDb } from '@/db'
 import { users, games, questions, answers, aiUsageLogs, errorLogs, liveGames, livePlayers } from '@/db/schema'
 import { count, sum, gte, desc, sql } from 'drizzle-orm'
@@ -15,6 +16,11 @@ import {
   MonitorPlay,
 } from 'lucide-react'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Admin Dashboard',
+  robots: { index: false, follow: false },
+}
 
 export const dynamic = 'force-dynamic'
 

@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import { getDb } from '@/db'
 import { aiUsageLogs, revenueEvents, costEvents } from '@/db/schema'
 import { count, sum, gte, desc } from 'drizzle-orm'
 import { Card } from '@/components/ui/card'
 import { DollarSign, TrendingDown, TrendingUp, AlertCircle } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Revenue — Admin',
+  robots: { index: false, follow: false },
+}
 
 export const dynamic = 'force-dynamic'
 

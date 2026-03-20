@@ -1,4 +1,10 @@
+import type { Metadata } from 'next'
 import { Trophy, Crown, Flame } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Leaderboard',
+  description: 'See the top trivia players competing on AI Trivia Arena. All-time champions and weekly leaders.',
+}
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'

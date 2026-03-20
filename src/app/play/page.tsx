@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { getSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+
+export const metadata: Metadata = {
+  title: 'Game Lobby',
+  description: 'Choose your trivia challenge — daily questions, custom games, or live multiplayer.',
+}
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Zap, Calendar, Users, Star } from 'lucide-react'

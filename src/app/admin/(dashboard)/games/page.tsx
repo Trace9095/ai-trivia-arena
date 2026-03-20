@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { getDb } from '@/db'
 import { games, answers, questions } from '@/db/schema'
 import { count, desc, sum } from 'drizzle-orm'
 import { Card } from '@/components/ui/card'
 import { Gamepad2 } from 'lucide-react'
 import { CategoryChart } from '@/components/admin/CategoryChart'
+
+export const metadata: Metadata = {
+  title: 'Games — Admin',
+  robots: { index: false, follow: false },
+}
 
 export const dynamic = 'force-dynamic'
 

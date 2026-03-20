@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import { getDb } from '@/db'
 import { errorLogs } from '@/db/schema'
 import { count, desc, sql } from 'drizzle-orm'
 import { Card } from '@/components/ui/card'
 import { ShieldAlert } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Error Logs — Admin',
+  robots: { index: false, follow: false },
+}
 
 export const dynamic = 'force-dynamic'
 

@@ -1,4 +1,10 @@
+import type { Metadata } from 'next'
 import { Card } from '@/components/ui/card'
+
+export const metadata: Metadata = {
+  title: 'Categories',
+  description: 'Choose from 11 AI-generated trivia categories — Science, History, Sports, Pop Culture, and more.',
+}
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Lock } from 'lucide-react'

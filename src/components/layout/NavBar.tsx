@@ -19,7 +19,7 @@ export function NavBar({ user }: NavBarProps) {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur border-b border-border h-16">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border h-16">
       <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg shrink-0">
           <Brain className="w-6 h-6 text-blue-500 shrink-0" />

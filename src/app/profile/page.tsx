@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { getDb } from '@/db'
@@ -6,6 +7,11 @@ import { eq } from 'drizzle-orm'
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Trophy, Flame, Gamepad2, Star } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Profile',
+  description: 'View your trivia stats, streak, and score history on AI Trivia Arena.',
+}
 
 export const dynamic = 'force-dynamic'
 

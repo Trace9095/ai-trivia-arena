@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import { getDb } from '@/db'
 import { users } from '@/db/schema'
 import { desc } from 'drizzle-orm'
 import { Card } from '@/components/ui/card'
 import { Users } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Users — Admin',
+  robots: { index: false, follow: false },
+}
 
 export const dynamic = 'force-dynamic'
 

@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { Card } from '@/components/ui/card'
 import { Settings } from 'lucide-react'
 import { CATEGORIES } from '@/lib/utils'
+
+export const metadata: Metadata = {
+  title: 'Settings — Admin',
+  robots: { index: false, follow: false },
+}
 
 export const dynamic = 'force-dynamic'
 
