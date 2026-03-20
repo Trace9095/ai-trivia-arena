@@ -7,8 +7,8 @@ import { getQuestionsFromPool } from '@/lib/question-pool'
 
 export const dynamic = 'force-dynamic'
 
-const ALWAYS_ON_TIME_PER_QUESTION = 30 // seconds
-const LEADERBOARD_DURATION_MS = 5000 // 5 seconds
+const ALWAYS_ON_TIME_PER_QUESTION = 15 // seconds per question (answer hidden)
+const LEADERBOARD_DURATION_MS = 8000 // 8 seconds showing answer + leaderboard
 const QUESTIONS_PER_BATCH = 20
 const CATEGORY_ROTATION = [
   'general', 'science', 'history', 'geography', 'pop_culture',
