@@ -9,16 +9,43 @@ export default function AppleIcon() {
     (
       <div
         style={{
-          width: '100%',
-          height: '100%',
+          width: 180,
+          height: 180,
+          background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
+          borderRadius: 40,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #3B82F6, #8B5CF6)',
-          borderRadius: '36px',
+          flexDirection: 'column',
         }}
       >
-        <div style={{ color: '#FFFFFF', fontSize: '72px', fontWeight: 800, fontFamily: 'system-ui, sans-serif', display: 'flex' }}>AT</div>
+        {/* Question mark */}
+        <div
+          style={{
+            color: '#ffffff',
+            fontSize: 100,
+            fontWeight: 900,
+            fontFamily: 'Georgia, serif',
+            lineHeight: 1,
+            display: 'flex',
+            paddingBottom: 10,
+          }}
+        >
+          ?
+        </div>
+        {/* Subtle label */}
+        <div
+          style={{
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: 18,
+            fontWeight: 700,
+            fontFamily: 'system-ui, sans-serif',
+            letterSpacing: 3,
+            display: 'flex',
+          }}
+        >
+          TRIVIA
+        </div>
       </div>
     ),
     { ...size }

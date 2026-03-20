@@ -11,18 +11,26 @@ export default function Icon() {
         style={{
           width: 32,
           height: 32,
-          background: 'linear-gradient(135deg, #3B82F6, #8B5CF6)',
-          borderRadius: 8,
+          background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
+          borderRadius: 7,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 13,
-          fontWeight: 900,
-          color: '#ffffff',
-          letterSpacing: -0.5,
         }}
       >
-        AI
+        <div
+          style={{
+            color: '#ffffff',
+            fontSize: 22,
+            fontWeight: 900,
+            fontFamily: 'Georgia, serif',
+            lineHeight: 1,
+            display: 'flex',
+            paddingBottom: 3,
+          }}
+        >
+          ?
+        </div>
       </div>
     ),
     { ...size }
