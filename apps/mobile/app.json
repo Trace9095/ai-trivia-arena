@@ -18,7 +18,8 @@
       "buildNumber": "1",
       "appleTeamId": "MPH83385EQ",
       "infoPlist": {
-        "NSCameraUsageDescription": "AI Trivia Arena uses the camera to scan game QR codes."
+        "NSCameraUsageDescription": "AI Trivia Arena uses the camera to scan game QR codes.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
