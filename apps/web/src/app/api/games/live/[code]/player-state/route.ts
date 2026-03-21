@@ -49,7 +49,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ code
   let myLastAnswer: Record<string, unknown> | null = null
 
   if (question) {
-    const globalQIndex = game.currentRound * game.questionsPerRound + game.currentQuestionIndex
+    // Always-on games use globalQuestionCount as the unique question identifier — matches
+    // the answer route so hasAnswered correctly reflects the current question.
+    const globalQIndex = game.isAlwaysOn
+      ? game.globalQuestionCount
+      : game.currentRound * game.questionsPerRound + game.currentQuestionIndex
     const [existing] = await db
       .select()
       .from(liveAnswers)

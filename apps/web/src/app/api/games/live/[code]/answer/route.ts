@@ -32,7 +32,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cod
 
   if (!player) return NextResponse.json({ error: 'Player not found' }, { status: 404 })
 
-  const globalQIndex = game.currentRound * game.questionsPerRound + game.currentQuestionIndex
+  // Always-on games use globalQuestionCount as the unique question identifier because
+  // currentQuestionIndex resets to 0 after each batch — using the computed formula
+  // would cause false "Already answered" collisions after question 20.
+  const globalQIndex = game.isAlwaysOn
+    ? game.globalQuestionCount
+    : game.currentRound * game.questionsPerRound + game.currentQuestionIndex
 
   // Prevent double-answering
   const [already] = await db
