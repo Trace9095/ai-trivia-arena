@@ -1,8 +1,8 @@
 # AI Trivia Arena — Claude Agent Notes
-> **Last updated:** 2026-03-20 | Session 124
-> **Repo:** `Trace9095/ai-trivia-arena` | **Branch:** `MAINBRANCH` (not main)
+> **Last updated:** 2026-03-20 | Session 124 (TV Polish)
+> **Repo:** `Trace9095/ai-trivia-arena` | **Branch:** `main` (Vercel deploys this)
 > **Vercel slug:** `ai-trivia-arena`
-> **Domain:** TBD (Wave 6, not yet live)
+> **Domain:** aitriviaarena.com
 > **Version:** 1.0.0
 
 ---
@@ -12,10 +12,11 @@
 ### S118 — Initial Build
 - Full-stack AI trivia game with TV mode
 - Turborepo monorepo structure (`apps/web` + `apps/mobile`)
-- 1,078 trivia questions seeded across multiple categories
-- TV mode `/tv` with auto-start (fixed — uses `useEffect` at line 392)
-- Admin dashboard with question management, analytics
-- Stripe live keys configured
+- 3,207 trivia questions seeded across 11 categories (including Colorado/local trivia)
+- TV mode `/tv` — generic multi-theme auto-start display
+- **`/rttv` — Rooftop Social branded kiosk display (use THIS for the bar TV)**
+- Admin dashboard with question management, analytics, user management
+- Stripe live keys configured (webhooks NOT wired — revenue doesn't flow to DB)
 - Neon DB + Drizzle ORM
 - Super admin: `ceo@epicai.ai` / `Trace87223!`
 - Additional admin: `Trace.hildebrand@gmail.com` / `Trace87223!`
@@ -36,6 +37,36 @@
 - Mobile app (`apps/mobile`) needs EAS dev build (has RevenueCat — not Expo Go compatible)
 - `eas.json` added, `expo-dev-client` added
 - Bug fixed: `react-native-worklets` reference cleaned up
+
+### S124 — /rttv Full Polish (commit 3532ac2)
+- **USE `/rttv` FOR THE BAR TV — point UniFi Display Cast Pro here**
+- Category badge prominently displayed in question header (pill badge + icon)
+- Category now exposed in API response (`/api/games/live/current`)
+- Question font minimum 48px (readable at 15+ feet), answers minimum 36px
+- Countdown timer 88px — huge and readable across the room
+- Answer reveal phase extended to 5s (was 2.6s)
+- Question entrance animation (fade+slide) on each new question via React key
+- Gold glow pulse on correct answer reveal
+- PromoCarousel on milestone leaderboard (Tonight's Special, Weekly Specials, Instagram, Gift Cards)
+- RT Specials seeded: Margarita Monday, Taste Tuesday, Locals' Day Wed, Thirsty Thursday, Friday Kickoff, Live Music Saturday, Sunday Funday
+- `rttv/layout.tsx` added with proper metadata
+- `turbopack.root` configured in `next.config.ts` for monorepo
+
+---
+
+## Key TV Routes
+
+| Route | Use Case |
+|-------|---------|
+| `/rttv` | **Rooftop Social branded kiosk** — use this for the bar TV |
+| `/tv` | Generic multi-theme display (not RT branded) |
+| `/join` | Players scan QR code and join on their phones |
+
+**UniFi Display Cast Pro URL:** `https://aitriviaarena.com/rttv`
+- Zero touch required — auto-starts on page load
+- No fullscreen prompts — CSS only (`width:100vw; height:100dvh`)
+- QR code always visible in bottom bar
+- 3,207 questions across 11 categories run automatically forever
 
 ---
 
