@@ -20,10 +20,10 @@ import {
 // ─── Theme definitions ────────────────────────────────────────────────────────
 const THEMES = {
   classic: {
-    bgClass: 'bg-gradient-to-b from-[#0A0A14] via-[#1A1040] to-[#0A0A14]',
-    cardClass: 'bg-white/5 border border-blue-500/30',
-    accentColor: '#3B82F6',
-    timerColor: '#3B82F6',
+    bgClass: 'bg-[#0D1117]',
+    cardClass: 'bg-white/5 border border-[#D4A853]/30',
+    accentColor: '#D4A853',
+    timerColor: '#D4A853',
     answerColors: ['#EF4444', '#3B82F6', '#10B981', '#F59E0B'],
     answerLabels: ['A', 'B', 'C', 'D'],
   },

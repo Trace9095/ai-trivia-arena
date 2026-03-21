@@ -102,7 +102,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ code
   if (question && game.status === 'active') {
     const seed = answerSeed(game.id, game.currentRound, game.currentQuestionIndex)
     const shuffled = getShuffledAnswers(question, seed)
-    const globalIndex = game.currentRound * game.questionsPerRound + game.currentQuestionIndex
+    // Always-on games use globalQuestionCount — it never resets (unlike currentQuestionIndex
+    // which wraps back to 0 after each 20-question batch).
+    const globalIndex = game.isAlwaysOn
+      ? game.globalQuestionCount
+      : game.currentRound * game.questionsPerRound + game.currentQuestionIndex
 
     questionData = {
       globalIndex,
