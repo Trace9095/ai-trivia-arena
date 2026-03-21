@@ -49,7 +49,7 @@ export function NavBar({ user }: NavBarProps) {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-white/8 bg-background">
+      <nav className="fixed top-0 left-0 right-0 z-50 will-change-transform border-b border-white/8 bg-background" style={{ transform: "translateZ(0)", paddingTop: "env(safe-area-inset-top, 0px)", height: "calc(4rem + env(safe-area-inset-top, 0px))" }}>
         <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between gap-4">
           {/* Brand */}
           <Link
