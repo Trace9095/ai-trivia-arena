@@ -38,9 +38,9 @@ export async function POST(request: Request) {
       cancel_url: `${appUrl}/pricing`,
       customer_email: session.email,
       metadata: {
-        userId: session.userId,
-        source: 'ai-trivia-arena',
+        source: 'aitriviaarena',
         plan: planKey,
+        userId: session.userId ?? 'anonymous',
       },
     })
 

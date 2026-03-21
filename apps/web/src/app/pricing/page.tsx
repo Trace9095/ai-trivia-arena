@@ -10,9 +10,9 @@ export const metadata = {
 }
 
 const PLAN_META = {
-  bar:    { Icon: Tv,          accent: '#D4A853', ring: false },
-  venue:  { Icon: Building2,   accent: '#D4A853', ring: true  },
-  annual: { Icon: CalendarDays, accent: '#D4A853', ring: false },
+  bar_license: { Icon: Tv,           accent: '#D4A853', ring: false },
+  venue_pack:  { Icon: Building2,    accent: '#D4A853', ring: true  },
+  annual:      { Icon: CalendarDays, accent: '#D4A853', ring: false },
 } as const
 
 export default function PricingPage() {

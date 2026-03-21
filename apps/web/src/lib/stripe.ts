@@ -13,17 +13,17 @@ export function getStripe(): Stripe {
 }
 
 // ── Pricing plans (inline price_data — no Stripe Dashboard products needed) ─
+// CEO-approved pricing: Bar License $49/mo, Venue Pack $149/mo, Annual $399/yr
 export const PLANS = {
-  bar: {
+  bar_license: {
     name: 'Bar License',
     price: 49,
     interval: 'month' as const,
     mode: 'subscription' as const,
-    description: 'Perfect for bars running weekly trivia nights',
+    description: 'Standard bar/restaurant trivia license',
     badge: null as null,
     features: [
       'Unlimited TV mode sessions',
-      '/rttv Rooftop Social kiosk display',
       'Phone join for bar guests — no app required',
       'Real-time leaderboard after every question',
       'All 11 categories including Colorado & Local',
@@ -34,18 +34,18 @@ export const PLANS = {
       unit_amount: 4900,
       recurring: { interval: 'month' as const },
       product_data: {
-        name: 'AI Trivia Arena — Bar License',
-        description: 'Monthly venue license for bars and restaurants',
+        name: 'AI Trivia Arena Bar License',
+        description: 'Standard bar/restaurant trivia license',
       },
     },
   },
-  venue: {
+  venue_pack: {
     name: 'Venue Pack',
     price: 149,
     interval: 'month' as const,
     mode: 'subscription' as const,
-    description: 'For larger venues, chains, and event companies',
-    badge: 'Most Popular' as const,
+    description: 'Multi-room, custom branding, analytics',
+    badge: 'Best Value' as const,
     features: [
       'Everything in Bar License',
       'Up to 5 screens / locations',
@@ -59,8 +59,8 @@ export const PLANS = {
       unit_amount: 14900,
       recurring: { interval: 'month' as const },
       product_data: {
-        name: 'AI Trivia Arena — Venue Pack',
-        description: 'Multi-location venue pack for event operators',
+        name: 'AI Trivia Arena Venue Pack',
+        description: 'Multi-room, custom branding, analytics',
       },
     },
   },
@@ -69,23 +69,22 @@ export const PLANS = {
     price: 399,
     interval: 'year' as const,
     mode: 'subscription' as const,
-    description: '2 months free vs Venue Pack monthly',
-    badge: 'Best Value' as const,
+    description: 'Bar License features for a full year',
+    badge: null as null,
     features: [
-      'Everything in Venue Pack',
+      'Everything in Bar License',
       'Unlimited screens / locations',
-      '32% savings vs monthly Venue Pack',
-      'White-label option',
-      'API access',
-      'Dedicated account manager',
+      'Saves $189 vs monthly Bar License',
+      'Annual billing — one charge per year',
+      'Cancel anytime',
     ],
     priceData: {
       currency: 'usd',
       unit_amount: 39900,
       recurring: { interval: 'year' as const },
       product_data: {
-        name: 'AI Trivia Arena — Annual License',
-        description: 'Annual venue license — best value',
+        name: 'AI Trivia Arena Annual',
+        description: 'Bar License features for a full year',
       },
     },
   },
