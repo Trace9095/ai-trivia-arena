@@ -12,58 +12,82 @@ export function getStripe(): Stripe {
   return _stripe
 }
 
-// ── Pricing plans ─────────────────────────────────────────────────────────
+// ── Pricing plans (inline price_data — no Stripe Dashboard products needed) ─
 export const PLANS = {
-  free: {
-    name: 'Free',
-    price: 0,
-    interval: null as null,
-    priceId: null as null,
-    features: [
-      'Unlimited solo play',
-      'Daily challenges',
-      'Global leaderboard',
-      'All standard categories',
-    ],
-  },
-  proMonthly: {
-    name: 'Pro Monthly',
-    price: 4.99,
+  bar: {
+    name: 'Bar License',
+    price: 49,
     interval: 'month' as const,
-    priceId: process.env.STRIPE_PRICE_ID_PRO_MONTHLY!,
+    mode: 'subscription' as const,
+    description: 'Perfect for bars running weekly trivia nights',
+    badge: null as null,
     features: [
-      'Everything in Free',
-      'Multiplayer & tournaments',
-      'No ads',
-      'Custom categories',
-      'Priority question generation',
+      'Unlimited TV mode sessions',
+      '/rttv Rooftop Social kiosk display',
+      'Phone join for bar guests — no app required',
+      'Real-time leaderboard after every question',
+      'All 11 categories including Colorado & Local',
+      'Cancel anytime',
     ],
+    priceData: {
+      currency: 'usd',
+      unit_amount: 4900,
+      recurring: { interval: 'month' as const },
+      product_data: {
+        name: 'AI Trivia Arena — Bar License',
+        description: 'Monthly venue license for bars and restaurants',
+      },
+    },
   },
-  proYearly: {
-    name: 'Pro Yearly',
-    price: 29.99,
+  venue: {
+    name: 'Venue Pack',
+    price: 149,
+    interval: 'month' as const,
+    mode: 'subscription' as const,
+    description: 'For larger venues, chains, and event companies',
+    badge: 'Most Popular' as const,
+    features: [
+      'Everything in Bar License',
+      'Up to 5 screens / locations',
+      'Custom branding on TV mode',
+      'Advanced analytics dashboard',
+      'Priority question generation',
+      'Dedicated support',
+    ],
+    priceData: {
+      currency: 'usd',
+      unit_amount: 14900,
+      recurring: { interval: 'month' as const },
+      product_data: {
+        name: 'AI Trivia Arena — Venue Pack',
+        description: 'Multi-location venue pack for event operators',
+      },
+    },
+  },
+  annual: {
+    name: 'Annual',
+    price: 399,
     interval: 'year' as const,
-    priceId: process.env.STRIPE_PRICE_ID_PRO_YEARLY!,
+    mode: 'subscription' as const,
+    description: '2 months free vs Venue Pack monthly',
+    badge: 'Best Value' as const,
     features: [
-      'Everything in Free',
-      'Multiplayer & tournaments',
-      'No ads',
-      'Custom categories',
-      'Priority question generation',
-      '~50% savings vs monthly',
+      'Everything in Venue Pack',
+      'Unlimited screens / locations',
+      '32% savings vs monthly Venue Pack',
+      'White-label option',
+      'API access',
+      'Dedicated account manager',
     ],
-  },
-  lifetime: {
-    name: 'Lifetime',
-    price: 49.99,
-    interval: null as null,
-    priceId: process.env.STRIPE_PRICE_ID_LIFETIME!,
-    features: [
-      'Everything in Pro, forever',
-      'All future features included',
-      'No recurring charges',
-      'Priority support',
-    ],
+    priceData: {
+      currency: 'usd',
+      unit_amount: 39900,
+      recurring: { interval: 'year' as const },
+      product_data: {
+        name: 'AI Trivia Arena — Annual License',
+        description: 'Annual venue license — best value',
+      },
+    },
   },
 } as const
 

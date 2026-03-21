@@ -1,216 +1,130 @@
 import { CheckoutButton } from './checkout-button'
 import { PLANS } from '@/lib/stripe'
-import { IOS_PRICES } from '@/lib/pricing'
-import { Check, Zap, Crown, Star, Infinity } from 'lucide-react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { SaveBanner } from '@/components/SaveBanner'
+import { Check, Tv, Building2, CalendarDays } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
 export const metadata = {
   title: 'Pricing — AI Trivia Arena',
-  description: 'Upgrade to Pro for multiplayer, tournaments, and more.',
+  description: 'Venue licensing for bars and restaurants running AI-powered trivia nights.',
 }
 
-// Per-plan config for icons and accent colours
 const PLAN_META = {
-  free:       { Icon: Zap,      accent: 'text-zinc-400',   ring: '',                          iconBg: 'bg-zinc-800 border-zinc-700' },
-  proMonthly: { Icon: Star,     accent: 'text-blue-400',   ring: '',                          iconBg: 'bg-blue-950 border-blue-800' },
-  proYearly:  { Icon: Crown,    accent: 'text-amber-300',  ring: 'ring-2 ring-amber-500/50',  iconBg: 'bg-amber-950 border-amber-700' },
-  lifetime:   { Icon: Infinity, accent: 'text-amber-400',  ring: '',                          iconBg: 'bg-amber-950 border-amber-800' },
+  bar:    { Icon: Tv,          accent: '#D4A853', ring: false },
+  venue:  { Icon: Building2,   accent: '#D4A853', ring: true  },
+  annual: { Icon: CalendarDays, accent: '#D4A853', ring: false },
 } as const
 
 export default function PricingPage() {
   return (
-    <main className="min-h-screen py-16 px-4">
+    <main
+      className="min-h-screen py-20 px-4"
+      style={{ background: '#0D1117' }}
+    >
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-3 bg-gradient-to-r from-amber-400 via-blue-400 to-amber-400 bg-clip-text text-transparent tracking-tight">
-            Pick Your Plan
+        <div className="text-center mb-14">
+          <p className="text-xs font-bold tracking-[0.25em] uppercase mb-4" style={{ color: '#D4A853' }}>
+            Venue Licensing
+          </p>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">
+            Trivia Night on Your Terms
           </h1>
-          <p className="text-zinc-400 text-lg max-w-xl mx-auto">
-            Start free forever. Upgrade to unlock multiplayer, tournaments, and custom categories.
+          <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
+            AI-generated questions that never repeat. Drop it on any TV and let your guests play from their phones — no app download required.
           </p>
         </div>
 
-        {/* iOS savings banner */}
-        <SaveBanner />
+        {/* Plans grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+          {(Object.keys(PLANS) as Array<keyof typeof PLANS>).map((key) => {
+            const plan = PLANS[key]
+            const meta = PLAN_META[key]
+            const isPrimary = meta.ring
 
-        {/* Cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-start">
+            return (
+              <div
+                key={key}
+                className={cn(
+                  'relative flex flex-col rounded-2xl border p-8 transition-all',
+                  isPrimary
+                    ? 'border-[#D4A853]/60 shadow-2xl shadow-[#D4A853]/10'
+                    : 'border-zinc-800 hover:border-zinc-700',
+                )}
+                style={{ background: isPrimary ? '#131920' : '#0f151c' }}
+              >
+                {plan.badge && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                    <span
+                      className="text-xs font-bold px-4 py-1.5 rounded-full"
+                      style={{ background: '#D4A853', color: '#0D1117' }}
+                    >
+                      {plan.badge}
+                    </span>
+                  </div>
+                )}
 
-          {/* Free */}
-          <PlanCard
-            planKey="free"
-            name={PLANS.free.name}
-            price="$0"
-            priceSub="forever free"
-            features={PLANS.free.features}
-            highlight={false}
-            badge={null}
-            cta={<FreeCta />}
-          />
+                {/* Icon + name */}
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-5 border"
+                  style={{ background: '#1a2330', borderColor: '#D4A853' + '33' }}
+                >
+                  <meta.Icon className="w-5 h-5" style={{ color: '#D4A853' }} />
+                </div>
 
-          {/* Pro Monthly */}
-          <PlanCard
-            planKey="proMonthly"
-            name={PLANS.proMonthly.name}
-            price="$4.99"
-            priceSub="per month"
-            iosPrice={`$${IOS_PRICES.proMonthly}/mo`}
-            features={PLANS.proMonthly.features}
-            highlight={false}
-            badge={null}
-            cta={
-              <CheckoutButton
-                priceId={PLANS.proMonthly.priceId}
-                plan="proMonthly"
-                label="Subscribe Monthly"
-              />
-            }
-          />
+                <p className="text-sm font-bold tracking-wide mb-1" style={{ color: '#D4A853' }}>
+                  {plan.name.toUpperCase()}
+                </p>
+                <p className="text-zinc-500 text-sm mb-5">{plan.description}</p>
 
-          {/* Pro Yearly — highlighted */}
-          <PlanCard
-            planKey="proYearly"
-            name={PLANS.proYearly.name}
-            price="$29.99"
-            priceSub="per year · save 50%"
-            iosPrice={`$${IOS_PRICES.proYearly}/yr`}
-            features={PLANS.proYearly.features}
-            highlight={true}
-            badge="Best Value"
-            cta={
-              <CheckoutButton
-                priceId={PLANS.proYearly.priceId}
-                plan="proYearly"
-                label="Subscribe Yearly"
-                variant="primary"
-              />
-            }
-          />
+                {/* Price */}
+                <div className="mb-6">
+                  <span className="text-5xl font-extrabold text-white tabular-nums">
+                    ${plan.price}
+                  </span>
+                  <span className="text-zinc-400 text-sm ml-2">
+                    / {plan.interval === 'year' ? 'year' : 'month'}
+                  </span>
+                </div>
 
-          {/* Lifetime */}
-          <PlanCard
-            planKey="lifetime"
-            name={PLANS.lifetime.name}
-            price="$49.99"
-            priceSub="one-time payment"
-            iosPrice={`$${IOS_PRICES.lifetime}`}
-            features={PLANS.lifetime.features}
-            highlight={false}
-            badge={null}
-            cta={
-              <CheckoutButton
-                priceId={PLANS.lifetime.priceId}
-                plan="lifetime"
-                label="Get Lifetime Access"
-              />
-            }
-          />
+                {/* CTA */}
+                <div className="mb-8">
+                  <CheckoutButton
+                    plan={key}
+                    label={`Get ${plan.name}`}
+                    variant={isPrimary ? 'primary' : 'default'}
+                  />
+                </div>
+
+                {/* Features */}
+                <ul className="space-y-3 flex-1">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-3 text-sm text-zinc-300">
+                      <Check className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#D4A853' }} />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          })}
         </div>
 
-        {/* Footer note */}
-        <p className="text-center text-zinc-600 text-sm mt-10">
-          Secure payments via Stripe. Cancel anytime from your account dashboard.
-        </p>
+        {/* Trust footer */}
+        <div className="mt-14 text-center space-y-3">
+          <p className="text-zinc-500 text-sm">
+            Secure payments via Stripe. Cancel anytime from your account dashboard.
+          </p>
+          <p className="text-zinc-600 text-sm">
+            Want to see it in action first?{' '}
+            <Link href="/rttv" className="underline underline-offset-4 hover:text-zinc-400 transition-colors" style={{ color: '#D4A853' }}>
+              Open TV mode live
+            </Link>
+          </p>
+        </div>
+
       </div>
     </main>
-  )
-}
-
-// ── Plan card ─────────────────────────────────────────────────────────────────
-
-interface PlanCardProps {
-  planKey: keyof typeof PLAN_META
-  name: string
-  price: string
-  priceSub: string
-  iosPrice?: string
-  features: readonly string[]
-  highlight: boolean
-  badge: string | null
-  cta: React.ReactNode
-}
-
-function PlanCard({
-  planKey,
-  name,
-  price,
-  priceSub,
-  iosPrice,
-  features,
-  highlight,
-  badge,
-  cta,
-}: PlanCardProps) {
-  const meta = PLAN_META[planKey]
-
-  return (
-    <Card
-      className={cn(
-        'relative flex flex-col border bg-card transition-all',
-        highlight
-          ? cn('border-amber-500/50 shadow-xl shadow-amber-500/10', meta.ring)
-          : 'border-white/8 hover:border-white/14 hover:shadow-lg hover:shadow-black/20',
-      )}
-    >
-      {badge && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
-          <span className="bg-amber-500 text-zinc-900 text-xs font-bold px-3.5 py-1 rounded-full shadow-lg shadow-amber-500/30">
-            {badge}
-          </span>
-        </div>
-      )}
-
-      <CardHeader className="pb-3 pt-7">
-        {/* Plan icon */}
-        <div className={cn('w-9 h-9 rounded-xl border flex items-center justify-center mb-4', meta.iconBg)}>
-          <meta.Icon className={cn('w-4.5 h-4.5', meta.accent)} />
-        </div>
-
-        <CardTitle className={cn('text-base font-bold', meta.accent)}>{name}</CardTitle>
-
-        <div className="mt-1">
-          <span className="text-4xl font-extrabold text-white tabular-nums">{price}</span>
-        </div>
-        <p className="text-xs text-zinc-500 mt-0.5">{priceSub}</p>
-
-        {iosPrice && (
-          <p className="text-xs text-zinc-600 mt-1">
-            iOS price: <span className="line-through">{iosPrice}</span>
-            <span className="text-zinc-500 ml-1">(web is cheaper)</span>
-          </p>
-        )}
-      </CardHeader>
-
-      <CardContent className="flex-1 pt-2">
-        <ul className="space-y-2.5">
-          {features.map((f) => (
-            <li key={f} className="flex items-start gap-2.5 text-sm text-zinc-300">
-              <Check className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-              <span>{f}</span>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-
-      <CardFooter className="pt-4">{cta}</CardFooter>
-    </Card>
-  )
-}
-
-// ── Free tier CTA ─────────────────────────────────────────────────────────────
-
-function FreeCta() {
-  return (
-    <Link
-      href="/join"
-      className="w-full inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/4 hover:bg-white/8 hover:border-white/18 text-zinc-300 hover:text-white text-sm font-semibold min-h-[44px] px-4 transition-all"
-    >
-      Get Started Free
-    </Link>
   )
 }

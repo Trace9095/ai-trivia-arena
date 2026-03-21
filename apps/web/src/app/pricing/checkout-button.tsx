@@ -4,14 +4,12 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface CheckoutButtonProps {
-  priceId: string
   plan: string
   label: string
   variant?: 'default' | 'primary'
 }
 
 export function CheckoutButton({
-  priceId,
   plan,
   label,
   variant = 'default',
@@ -28,12 +26,11 @@ export function CheckoutButton({
       const res = await fetch('/api/billing/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId, plan }),
+        body: JSON.stringify({ plan }),
       })
 
       if (res.status === 401) {
-        // Not logged in — redirect to join then back to pricing
-        router.push('/join?next=/pricing')
+        router.push('/auth/login?next=/pricing')
         return
       }
 
@@ -53,12 +50,12 @@ export function CheckoutButton({
   }
 
   const baseClass =
-    'w-full inline-flex items-center justify-center rounded-md text-sm font-medium min-h-[44px] px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+    'w-full inline-flex items-center justify-center rounded-lg text-sm font-semibold min-h-[44px] px-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed'
 
   const variantClass =
     variant === 'primary'
-      ? 'bg-amber-500 hover:bg-amber-400 text-zinc-900'
-      : 'border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-100'
+      ? 'bg-[#D4A853] hover:bg-[#E8C97A] text-[#0D1117]'
+      : 'border border-[#D4A853]/40 bg-[#131920] hover:bg-[#1a2330] text-zinc-100 hover:border-[#D4A853]/70'
 
   return (
     <div className="w-full space-y-1">
@@ -67,9 +64,9 @@ export function CheckoutButton({
         disabled={loading}
         className={`${baseClass} ${variantClass}`}
       >
-        {loading ? 'Redirecting…' : label}
+        {loading ? 'Redirecting to Stripe…' : label}
       </button>
-      {error && <p className="text-xs text-red-400 text-center">{error}</p>}
+      {error && <p className="text-xs text-red-400 text-center mt-1">{error}</p>}
     </div>
   )
 }
