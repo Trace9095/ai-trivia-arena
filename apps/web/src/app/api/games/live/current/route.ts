@@ -322,6 +322,9 @@ export async function GET() {
         ? (game.categoryPickDeadline?.toISOString() ?? null)
         : null
 
+    // Expose the current round's category so the TV display can show it
+    const currentCategory = (game.roundsJson as GameRound[])[0]?.category ?? 'mixed'
+
     return NextResponse.json({
       gameCode: game.gameCode,
       theme: game.theme,
@@ -334,6 +337,7 @@ export async function GET() {
       voteCounts,
       timePerQuestion: game.timePerQuestion,
       playerCount: players.length,
+      category: currentCategory,
       question: questionData,
       leaderboard,
     })
