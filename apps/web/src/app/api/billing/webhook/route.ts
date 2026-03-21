@@ -5,6 +5,9 @@ import { getDb } from '@/db'
 import { users } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')
@@ -94,6 +97,27 @@ export async function POST(request: Request) {
 
         // Don't immediately revoke — Stripe retries. Just log for now.
         console.warn('[api/billing/webhook] invoice.payment_failed', { customerId })
+        break
+      }
+
+      case 'customer.subscription.created': {
+        // checkout.session.completed already handles initial activation — no-op here
+        break
+      }
+
+      case 'invoice.paid': {
+        const invoice = event.data.object as Stripe.Invoice
+        const customerId = typeof invoice.customer === 'string' ? invoice.customer : null
+        if (!customerId) break
+
+        // Extend subscription — mark pro active and update expiry from period end
+        const periodEnd = (invoice as unknown as { period_end: number }).period_end
+        if (periodEnd) {
+          await db
+            .update(users)
+            .set({ isPro: true, proExpiresAt: new Date(periodEnd * 1000) })
+            .where(eq(users.stripeCustomerId, customerId))
+        }
         break
       }
 
