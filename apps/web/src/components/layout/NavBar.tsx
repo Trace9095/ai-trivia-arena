@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Brain, Trophy, CreditCard, Menu, X, Zap, Tv, Smartphone } from 'lucide-react'
+import { Brain, Trophy, CreditCard, Menu, X, Zap, Tv, Smartphone, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { href: '/pricing', label: 'Pricing', icon: CreditCard },
   { href: '/tv', label: 'TV Mode', icon: Tv },
   { href: '/join', label: 'Join Game', icon: Smartphone },
+  { href: '/blog', label: 'Blog', icon: BookOpen },
 ] as const
 
 export function NavBar({ user }: NavBarProps) {
@@ -69,6 +70,7 @@ export function NavBar({ user }: NavBarProps) {
             {navLink('/play', 'Play')}
             {navLink('/leaderboard', 'Leaderboard')}
             {navLink('/pricing', 'Pricing')}
+            {navLink('/blog', 'Blog')}
           </div>
 
           {/* Right actions */}
