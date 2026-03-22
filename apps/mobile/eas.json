@@ -21,6 +21,11 @@
       "distribution": "internal"
     },
     "production": {
+      "distribution": "store",
+      "channel": "production",
+      "android": {
+        "buildType": "app-bundle"
+      },
       "autoIncrement": true
     }
   },
@@ -28,7 +33,12 @@
     "production": {
       "ios": {
         "appleId": "CEO@epicai.ai",
+        "ascAppId": "REPLACE_WITH_APP_STORE_CONNECT_APP_ID",
         "appleTeamId": "MPH83385EQ"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-services-key.json",
+        "track": "internal"
       }
     }
   }
