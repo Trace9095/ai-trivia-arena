@@ -132,7 +132,9 @@ function LeaderboardRow({
         </div>
       )}
       <div className="text-right shrink-0">
-        <p className="font-mono font-black text-blue-400 text-base tabular-nums">{score.toLocaleString()}</p>
+        <p className={`font-mono font-black text-base tabular-nums ${rank === 1 ? 'text-amber-400' : rank <= 3 ? 'text-zinc-300' : 'text-blue-400'}`}>
+          {score.toLocaleString()}
+        </p>
         <p className="text-xs text-zinc-600">pts</p>
       </div>
     </div>
@@ -157,29 +159,29 @@ export default async function LeaderboardPage() {
   const weeklyFiltered = weekly.filter((u) => u.weekScore > 0)
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10">
+    <div className="max-w-2xl mx-auto px-4 py-12">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center shrink-0">
-          <Trophy className="w-6 h-6 text-yellow-400" />
+      <div className="flex items-center gap-4 mb-10">
+        <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 border border-yellow-500/25 flex items-center justify-center shrink-0 shadow-lg shadow-yellow-500/10">
+          <Trophy className="w-7 h-7 text-yellow-400" />
         </div>
         <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">Leaderboard</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">Top trivia players worldwide</p>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Leaderboard</h1>
+          <p className="text-zinc-500 text-sm mt-1">Top trivia players worldwide</p>
         </div>
       </div>
 
       <Tabs defaultValue="week">
-        <TabsList className="w-full mb-6 bg-card border border-white/8 p-1">
+        <TabsList className="w-full mb-6 bg-card border border-white/8 p-1 rounded-xl">
           <TabsTrigger
             value="week"
-            className="flex-1 data-[state=active]:bg-white/10 data-[state=active]:text-white text-zinc-500"
+            className="flex-1 data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-300 data-[state=active]:border-amber-500/25 text-zinc-500 rounded-lg transition-all"
           >
             This Week
           </TabsTrigger>
           <TabsTrigger
             value="alltime"
-            className="flex-1 data-[state=active]:bg-white/10 data-[state=active]:text-white text-zinc-500"
+            className="flex-1 data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-300 data-[state=active]:border-amber-500/25 text-zinc-500 rounded-lg transition-all"
           >
             All Time
           </TabsTrigger>

@@ -24,14 +24,29 @@ export default function PricingPage() {
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
-        <div className="text-center mb-14">
-          <p className="text-xs font-bold tracking-[0.25em] uppercase mb-4" style={{ color: '#D4A853' }}>
+        <div className="text-center mb-16">
+          <p className="text-xs font-bold tracking-[0.25em] uppercase mb-5 inline-flex items-center gap-2" style={{ color: '#D4A853' }}>
+            <span
+              className="inline-block w-5 h-px"
+              style={{ background: '#D4A853', opacity: 0.5 }}
+            />
             Venue Licensing
+            <span
+              className="inline-block w-5 h-px"
+              style={{ background: '#D4A853', opacity: 0.5 }}
+            />
           </p>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">
-            Trivia Night on Your Terms
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-5 tracking-tight leading-tight">
+            Trivia Night
+            <br />
+            <span
+              className="bg-gradient-to-r from-amber-400 to-yellow-300 bg-clip-text text-transparent"
+              style={{ WebkitBackgroundClip: 'text' }}
+            >
+              on Your Terms
+            </span>
           </h1>
-          <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
+          <p className="text-zinc-400 text-lg max-w-2xl mx-auto leading-relaxed">
             AI-generated questions that never repeat. Drop it on any TV and let your guests play from their phones — no app download required.
           </p>
         </div>
