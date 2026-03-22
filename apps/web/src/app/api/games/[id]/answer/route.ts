@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSessionFromRequest } from '@/lib/auth'
 import { getDb } from '@/db'
 import { answers, questions, gamePlayers } from '@/db/schema'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, sql } from 'drizzle-orm'
 import { calculatePoints } from '@/lib/utils'
 
 export async function POST(
@@ -38,10 +38,10 @@ export async function POST(
     })
     .returning()
 
-  // Update player score
+  // Update player score (increment, not overwrite)
   await db
     .update(gamePlayers)
-    .set({ score: pointsEarned })
+    .set({ score: sql`${gamePlayers.score} + ${pointsEarned}` })
     .where(and(eq(gamePlayers.gameId, gameId), eq(gamePlayers.userId, session.userId)))
 
   return NextResponse.json({
