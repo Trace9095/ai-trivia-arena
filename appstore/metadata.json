@@ -1,0 +1,44 @@
+{
+  "app_name": "AI Trivia Arena",
+  "subtitle": "Multiplayer Quiz Powered by AI",
+  "bundle_id": "com.epicai.aitriviaarena",
+  "version": "1.0.0",
+  "build_number": "1",
+  "primary_category": "Games",
+  "secondary_category": "Education",
+  "age_rating": "4+",
+  "content_rights": {
+    "contains_third_party_content": false
+  },
+  "privacy_policy_url": "https://epicai.ai/privacy",
+  "support_url": "https://epicai.ai/trivia/support",
+  "marketing_url": "https://epicai.ai/trivia",
+  "locales": {
+    "en-US": {
+      "name": "AI Trivia Arena",
+      "subtitle": "Multiplayer Quiz Powered by AI",
+      "keywords": "AI trivia,multiplayer trivia,quiz game,trivia night,knowledge game,brain game,pub quiz",
+      "description": "AI Trivia Arena is the multiplayer trivia game that never runs out of questions — because it generates them on the fly.\n\nTraditional trivia games have a fixed question pool. Play long enough and you see the same questions again. AI Trivia Arena solves this completely: its AI engine generates fresh, verified questions across hundreds of topics so every game is genuinely different. You can play every night for a year and never hit a repeat.\n\nGame modes:\n- Solo Challenge — race against the clock to see how many you can answer correctly\n- Multiplayer Duel — head-to-head live battles against another player in real time\n- Group Arena — up to 8 players in a room, competing simultaneously for the top score\n- TV Mode — put it on the big screen for parties and bar events; everyone plays on their phones\n- Daily Blitz — 10 questions, one shot, global leaderboard. Score resets every 24 hours\n\nAI-powered categories:\n- General Knowledge\n- Science & Technology\n- History & Geography\n- Pop Culture & Entertainment\n- Sports & Athletes\n- Music & Artists\n- Food & Drink\n- Literature & Books\n- Current Events (updated daily)\n- Custom categories — ask the AI to generate a round on any topic you choose\n\nWhat makes it different:\nQuestions are difficulty-rated in real time based on how the player community answers them. Easy questions that everyone gets right get harder. Tricky questions that stump the room get explained and refined. The AI learns what's too easy and what's too hard, making every session feel perfectly challenging.\n\nPower-ups:\n- 50/50 — eliminate two wrong answers\n- Skip — replace a question you've never heard of\n- Double Points — bet your round on a category you know\n- Time Freeze — pause the clock for 10 seconds\n\nLeaderboards:\n- Global all-time\n- Weekly reset boards\n- Friend leaderboards\n- Category-specific rankings (are you actually the best at 80s music trivia? Prove it)\n\nTV Mode for events:\nRun AI Trivia Arena on a venue TV or projector while players join on their phones. Questions display on the big screen, everyone answers simultaneously, and the live scoreboard shows the battle in real time. Perfect for bar trivia nights, company events, and parties.\n\nFor trivia hosts:\nCreate a private room, choose your categories, set difficulty, and run a curated trivia night without a trivia book or printed sheets. Host controls let you skip questions, pause rounds, and reveal answers dramatically.\n\n1,000+ questions already in the bank — and growing every day.\n\nDownload AI Trivia Arena. Think fast. Play faster.",
+      "promotional_text": "Multiplayer trivia powered by AI — questions that never repeat. Solo, duel, group arena, and TV mode for parties.",
+      "whats_new": "AI Trivia Arena v1.0 — multiplayer trivia powered by AI.\n\nLaunch features:\n- 1,000+ question bank across 12 categories\n- AI question generation for endless variety\n- Solo, Duel, Group Arena, and TV modes\n- Daily Blitz with global leaderboard\n- Custom category requests\n- Power-ups (50/50, Skip, Double Points, Time Freeze)\n- Host controls for private events\n- Real-time multiplayer engine\n\nNew categories, seasonal events, and creator mode coming in v1.1. Download and join the arena.",
+      "screenshot_descriptions": [
+        "Screenshot 1: Multiplayer trivia with questions that never repeat — AI generates fresh questions every game — no more seeing the same round twice",
+        "Screenshot 2: Head-to-head duels in real time — Live multiplayer battles where speed and knowledge both matter",
+        "Screenshot 3: TV Mode turns any party into a trivia night — Big screen display with phone-based answering for groups of any size",
+        "Screenshot 4: Custom categories generated on demand — Ask the AI for a round on any topic — 90s cartoons, Colorado history, whatever you want",
+        "Screenshot 5: Daily Blitz: 10 questions, 24-hour leaderboard — One shot per day to beat everyone on the global board",
+        "Screenshot 6: Difficulty adjusts based on how the community plays — The AI learns what's actually hard vs. what just sounds hard"
+      ]
+    }
+  },
+  "screenshots": {
+    "iphone_65": [
+      "screenshots/iphone/01_main.png",
+      "screenshots/iphone/02_feature.png",
+      "screenshots/iphone/03_feature.png",
+      "screenshots/iphone/04_feature.png",
+      "screenshots/iphone/05_feature.png",
+      "screenshots/iphone/06_share.png"
+    ]
+  }
+}
