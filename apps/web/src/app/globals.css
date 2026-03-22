@@ -226,3 +226,106 @@
     height: 100dvh !important;
   }
 }
+
+/* ─── Blog / Prose Styles ────────────────────────────────────────────────────
+   Scoped to .prose-blog so they never bleed into the rest of the app.
+   All selectors reference CSS variables from the dark theme defined above,
+   so they stay consistent if the theme ever changes.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.prose-blog {
+  color: oklch(0.80 0 0);
+  font-size: 1rem;
+  line-height: 1.75;
+  max-width: none;
+}
+
+.prose-blog p {
+  margin-top: 0;
+  margin-bottom: 1.375rem;
+}
+
+.prose-blog h2 {
+  color: oklch(0.96 0 0);
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 2.5rem;
+  margin-bottom: 0.875rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid oklch(1 0 0 / 8%);
+}
+
+.prose-blog h3 {
+  color: oklch(0.96 0 0);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-top: 2rem;
+  margin-bottom: 0.625rem;
+}
+
+/* Internal links use the brand gold colour */
+.prose-blog a.text-gold {
+  color: #D4A853;
+  text-underline-offset: 3px;
+}
+
+.prose-blog a {
+  color: #D4A853;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+
+.prose-blog a:hover {
+  color: oklch(0.90 0.14 72);
+}
+
+.prose-blog ul,
+.prose-blog ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.375rem;
+}
+
+.prose-blog ul {
+  list-style-type: disc;
+}
+
+.prose-blog ol {
+  list-style-type: decimal;
+}
+
+.prose-blog li {
+  margin-bottom: 0.5rem;
+}
+
+.prose-blog strong {
+  color: oklch(0.96 0 0);
+  font-weight: 600;
+}
+
+.prose-blog blockquote {
+  border-left: 3px solid oklch(0.78 0.14 72 / 60%);
+  padding-left: 1.25rem;
+  margin-left: 0;
+  margin-right: 0;
+  color: oklch(0.65 0 0);
+  font-style: italic;
+}
+
+.prose-blog code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.875em;
+  background: oklch(1 0 0 / 6%);
+  border: 1px solid oklch(1 0 0 / 10%);
+  border-radius: 0.3rem;
+  padding: 0.15em 0.4em;
+  color: oklch(0.90 0.08 72);
+}
+
+.prose-blog hr {
+  border: none;
+  border-top: 1px solid oklch(1 0 0 / 8%);
+  margin: 2.5rem 0;
+}
